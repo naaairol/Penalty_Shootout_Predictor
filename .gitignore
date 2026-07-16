@@ -8,3 +8,6 @@ ENV/
 
 # Configuración de Visual Studio Code
 .vscode/
+
+# Configuración de PyCharm
+.idea/
