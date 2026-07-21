@@ -1,0 +1,45 @@
+﻿id_jugador,jugador,equipo,pie_dominante,posicion,total_penales,penales_tanda,penales_partido,goles_penal,penales_atajados,penales_fallados,porcentaje_gol,zona_favorita,segunda_zona,porcentaje_zona_favorita,porcentaje_ai,porcentaje_ac,porcentaje_ad,porcentaje_mi,porcentaje_mc,porcentaje_md,porcentaje_bi,porcentaje_bc,porcentaje_bd,altura_favorita,presion_alta_goles,presion_alta_fallos,rendimiento_presion,cansancio_estimado,riesgo_lesion,cambio_reciente,ultimo_penal_zona,ultimo_penal_resultado,promedio_numero_tanda,competiciones
+1,Emiliano Martínez,Argentina,Derecho,Portero,1,1,0,1,6,0,100,AI,MC,28.8,28.8,4.2,12.7,10.2,14.4,11,4.2,7.6,6.9,Alta,0,0,0,Bajo,Medio,No,MI,Atajado,5.1,Copa América
+2,Gerónimo Rulli,Argentina,Derecho,Portero,0,0,0,0,6,0,0,BD,MD,23.2,8,8,14.3,5.4,2.7,15.2,17,6.2,23.2,Media,0,0,0,Bajo,Alto,Sí,MI,Gol,2.6,Eliminatorias
+3,Juan Musso,Argentina,Izquierdo,Portero,1,1,0,1,7,0,100,AI,AC,28.4,28.4,12.7,6.9,2.9,19.6,2.9,12.7,6.9,7,Baja,1,0,100,Alto,Bajo,Sí,MC,Fuera,3.6,Eurocopa
+4,Nahuel Molina,Argentina,Derecho,Defensa,0,0,0,0,0,0,0,BC,MD,26,9.9,12.2,3.8,9.2,15.3,4.6,9.2,26,9.8,Baja,0,0,0,Medio,Medio,Sí,BI,Atajado,5.3,Eliminatorias
+5,Cristian Romero,Argentina,Derecho,Defensa,2,2,0,2,0,0,100,AC,AI,21.7,15.8,21.7,3.3,4.2,14.2,9.2,11.7,4.2,15.7,Baja,2,0,100,Bajo,Medio,Sí,BD,Atajado,3.1,Eurocopa
+6,Nicolás Otamendi,Argentina,Izquierdo,Defensa,0,0,0,0,0,0,0,BC,MC,21.1,2.6,17.5,6.1,5.3,15.8,14.9,14,21.1,2.7,Baja,0,0,0,Medio,Alto,Sí,MD,Palo,3.6,Mundial
+7,Lisandro Martínez,Argentina,Derecho,Defensa,1,1,0,1,0,0,100,AC,BC,19.6,8.4,19.6,13.3,6.3,9.8,12.6,10.5,14,5.5,Alta,0,0,0,Alto,Medio,No,MC,Palo,5,Eliminatorias
+8,Marcos Senesi,Argentina,Izquierdo,Defensa,5,1,4,4,0,1,80,AC,BD,32.8,9,32.8,8.2,15.6,10.7,4.9,11.5,3.3,4,Baja,1,1,50,Medio,Medio,Sí,MD,Palo,3.4,Eliminatorias
+9,Nicolás Tagliafico,Argentina,Derecho,Defensa,0,0,0,0,0,0,0,MD,AI,17.8,14,8.5,11.6,8.5,11.6,17.8,11.6,10.9,5.5,Media,0,0,0,Medio,Medio,No,BC,Gol,3.5,Eurocopa
+10,Rodrigo De Paul,Argentina,Izquierdo,Mediocampista,15,6,9,14,0,1,93.3,AD,BC,31.4,5.9,14.7,31.4,18.6,2.9,9.8,7.8,3.9,5,Baja,7,0,100,Alto,Alto,Sí,BC,Gol,4.9,Nations League
+11,Enzo Fernández,Argentina,Derecho,Mediocampista,1,1,0,1,0,0,100,AC,AI,23.2,10.6,23.2,12.6,7.9,10.6,7.3,11.3,11.9,4.6,Media,0,0,0,Medio,Medio,Sí,AC,Atajado,4.1,Eliminatorias
+12,Alexis Mac Allister,Argentina,Derecho,Mediocampista,2,0,2,2,0,0,100,BD,AC,29.5,3.8,9.8,6.1,6.1,12.1,7.6,13.6,11.4,29.5,Baja,2,0,100,Medio,Medio,Sí,MD,Atajado,4.3,Mundial
+13,Leandro Paredes,Argentina,Derecho,Mediocampista,8,6,2,7,0,1,87.5,BC,MI,36.8,5.7,4.7,10.4,17.9,9.4,6.6,2.8,36.8,5.7,Baja,0,1,0,Bajo,Alto,Sí,MI,Fuera,5.3,Mundial
+14,Giovani Lo Celso,Argentina,Derecho,Mediocampista,11,4,7,11,0,0,100,BC,BI,23.9,9.4,11.3,9.4,8.8,8.8,10.7,12.6,23.9,5.1,Baja,8,0,100,Medio,Alto,Sí,BD,Palo,4.5,Copa América
+15,Exequiel Palacios,Argentina,Derecho,Mediocampista,3,2,1,3,0,0,100,AD,AI,23.3,7.5,5,23.3,4.2,2.5,15,15,10.8,16.7,Baja,0,0,0,Alto,Alto,Sí,AD,Atajado,3.8,Eurocopa
+16,Lionel Messi,Argentina,Izquierdo,Delantero,33,0,33,29,0,4,87.9,BC,AD,28.2,2.4,9.7,14.5,4.8,6.5,10.5,8.9,28.2,14.5,Baja,0,4,0,Medio,Medio,No,MD,Atajado,2.9,Copa América
+17,Julián Álvarez,Argentina,Derecho,Delantero,22,13,9,20,0,2,90.9,BC,BI,25.4,14.8,7.4,7.4,15.6,11.5,5.7,8.2,25.4,4,Media,15,1,93.8,Bajo,Bajo,No,AC,Palo,3.5,Eurocopa
+18,Lautaro Martínez,Argentina,Derecho,Delantero,23,0,23,23,0,0,100,AD,MC,18.2,15.2,6.8,18.2,3,5.3,14.4,13.6,13.6,9.9,Baja,3,0,100,Alto,Medio,Sí,AI,Fuera,5.2,Nations League
+19,Nico González,Argentina,Izquierdo,Mediocampista,2,0,2,2,0,0,100,MI,AD,19.9,14.2,12.1,12.1,19.9,14.2,3.5,3.5,14.2,6.3,Alta,0,0,0,Alto,Alto,Sí,AI,Gol,3.5,Eurocopa
+20,Facundo Medina,Argentina,Izquierdo,Defensa,5,5,0,4,0,1,80,AI,MD,30.6,30.6,12.6,6.3,2.7,2.7,2.7,10.8,15.3,16.3,Baja,3,1,75,Medio,Alto,No,BI,Gol,4.6,Copa América
+21,Giuliano Simeone,Argentina,Derecho,Delantero,5,4,1,4,0,1,80,AD,AI,23.3,6.8,16.5,23.3,4.9,10.7,6.8,13.6,12.6,4.8,Baja,1,1,50,Alto,Medio,No,MD,Palo,5.3,Mundial
+22,Gonzalo Montiel,Argentina,Derecho,Defensa,3,1,2,3,0,0,100,BC,BI,21.9,10.9,9.4,5.5,14.8,8.6,9.4,4.7,21.9,14.8,Alta,1,0,100,Alto,Alto,No,AI,Fuera,4.5,Mundial
+23,Unai Simón,España,Derecho,Portero,2,2,0,2,6,0,100,AC,AD,27.9,12.9,27.9,12.9,9.3,7.1,2.9,7.1,14.3,5.6,Media,1,0,100,Bajo,Bajo,Sí,AD,Fuera,4.3,Amistosos
+24,David Raya,España,Derecho,Portero,2,2,0,2,8,0,100,MC,MD,24.5,4.2,4.9,11.9,11.2,24.5,12.6,14,9.1,7.6,Baja,2,0,100,Medio,Bajo,No,BD,Atajado,3.1,Eliminatorias
+25,Joan García,España,Derecho,Portero,0,0,0,0,10,0,0,BI,BC,28.9,2.5,12.4,7.4,7.4,10.7,12.4,28.9,14.9,3.4,Alta,0,0,0,Bajo,Alto,Sí,AI,Fuera,5.1,Mundial
+26,Marcos Llorante,España,Derecho,Defensa,1,0,1,1,0,0,100,MC,AC,36.2,16.2,5.7,4.8,13.3,36.2,7.6,5.7,6.7,3.8,Baja,1,0,100,Medio,Bajo,Sí,BD,Fuera,5,Eliminatorias
+27,Pedro Porro,España,Derecho,Defensa,1,1,0,1,0,0,100,AD,MD,26.8,4.5,8.9,26.8,8.9,8.9,17.9,9.8,5.4,8.9,Baja,1,0,100,Alto,Alto,No,MC,Gol,4.8,Nations League
+28,Aymeric Laporte,España,Derecho,Defensa,3,1,2,3,0,0,100,MD,BI,30.9,5.5,3.6,16.4,2.7,4.5,30.9,13.6,5.5,17.3,Baja,3,0,100,Bajo,Alto,Sí,BC,Fuera,3.6,Copa América
+29,Pau Cubarsí,España,Derecho,Defensa,3,2,1,3,0,0,100,MI,BD,18.8,6,9,4.5,18.8,12,15,11.3,11.3,12.1,Media,3,0,100,Bajo,Medio,Sí,AI,Fuera,2.9,Eurocopa
+30,Eric García,España,Derecho,Defensa,3,3,0,3,0,0,100,BC,MI,31.5,11.3,11.3,3.2,6.5,8.1,9.7,8.1,31.5,10.3,Media,3,0,100,Medio,Medio,Sí,BD,Gol,4.8,Copa América
+31,Alex Grimaldo,España,Izquierdo,Defensa,6,2,4,6,0,0,100,BI,AC,22.4,18.7,7.5,5.2,14.6,11.3,8.9,22.4,5.8,10.4,Media,3,0,100,Medio,Alto,Sí,BI,Gol,3.2,Eliminatorias
+32,Marc Pubill,España,Derecho,Defensa,3,1,2,3,0,0,100,AD,MD,27.6,8.4,12.5,27.6,6.3,10.8,4.7,9.6,13.2,8.1,Baja,2,0,100,Alto,Medio,No,AD,Fuera,4.1,Amistosos
+33,Marc Cucurella,España,Derecho,Defensa,5,0,5,5,0,0,100,BI,MC,23.8,15.8,9.9,3,15.8,12.9,9.9,23.8,4,4.9,Alta,2,0,100,Medio,Alto,Sí,BI,Palo,2.6,Nations League
+34,Rodri,España,Derecho,Mediocampista,15,15,0,12,0,3,80,AI,BC,28.6,28.6,10.3,5.6,11.1,13.5,4.8,7.1,11.9,7.1,Alta,12,3,80,Medio,Bajo,No,BC,Gol,5,Amistosos
+35,Pedri,España,Derecho,Mediocampista,13,2,11,12,0,1,92.3,BI,BD,21.2,6.8,12.7,11,3.4,11,3.4,21.2,15.3,15.2,Media,0,0,0,Medio,Medio,Sí,BD,Fuera,2.8,Eliminatorias
+36,Alex Baena,España,Derecho,Mediocampista,6,2,4,6,0,0,100,BI,MC,30,16.4,4.5,13.6,2.7,18.2,2.7,30,5.5,6.4,Baja,3,0,100,Bajo,Alto,No,MC,Palo,3.6,Eurocopa
+37,Martín Zubimendi,España,Derecho,Mediocampista,4,3,1,4,0,0,100,BC,AC,35.6,12.5,3.8,8.7,2.9,8.7,5.8,7.7,35.6,14.3,Baja,4,0,100,Bajo,Bajo,Sí,MC,Gol,3.4,Copa América
+38,Mikel Merino,España,Izquierdo,Mediocampista,7,0,7,7,0,0,100,BI,AC,19.4,16.1,8.9,12.1,4.8,13.7,4.8,19.4,4.8,15.4,Alta,2,0,100,Alto,Bajo,No,AC,Fuera,4.7,Copa América
+39,Fabián Ruiz,España,Izquierdo,Mediocampista,9,4,5,8,0,1,88.9,BI,MC,26.3,14.8,8.7,6.4,12.9,10.5,7.2,26.3,4.8,9.1,Media,4,1,80,Medio,Medio,Sí,BI,Gol,3.9,Eliminatorias
+40,Gavi,España,Derecho,Mediocampista,10,8,2,9,0,1,90,BI,MD,30,10,5.4,12.3,7.7,13.1,10.8,30,6.9,3.8,Baja,5,1,83.3,Bajo,Bajo,Sí,BD,Gol,3.1,Nations League
+41,Lamine Yamal,España,Derecho,Delantero,8,8,0,8,0,0,100,AD,AC,25,11.8,13.2,25,13.9,6.9,7.6,2.8,4.9,13.9,Baja,3,0,100,Alto,Alto,No,AC,Atajado,2.7,Eliminatorias
+42,Victor Muñoz,España,Derecho,Delantero,31,10,21,25,0,6,80.6,AD,MD,24.4,9.2,15.3,24.4,6.1,11.5,2.3,11.5,12.2,7.5,Media,17,6,73.9,Alto,Bajo,No,AD,Fuera,3.4,Nations League
+43,Borja Iglesias ,España,Derecho,Delantero,26,12,14,24,0,2,92.3,MC,AD,24.1,10.3,3.4,10.3,12.1,24.1,10.3,10.3,16.4,2.8,Alta,0,2,0,Medio,Medio,Sí,BC,Fuera,4.2,Amistosos
+44,Mikel Oyarzabal,España,Derecho,Delantero,8,5,3,7,0,1,87.5,MI,AC,24.6,9.8,5.7,7.4,24.6,4.9,16.4,3.3,13.1,14.8,Alta,0,1,0,Bajo,Medio,Sí,MC,Fuera,3.8,Amistosos
