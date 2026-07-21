@@ -1,0 +1,7 @@
+﻿id_arquero,arquero,equipo,pie_dominante,edad,club_actual,total_penales_enfrentados,penales_atajados,goles_recibidos,penales_fuera,porcentaje_atajadas,porcentaje_goles_recibidos,zona_fuerte,segunda_zona_fuerte,porcentaje_ai,porcentaje_ac,porcentaje_ad,porcentaje_mi,porcentaje_mc,porcentaje_md,porcentaje_bi,porcentaje_bc,porcentaje_bd,rendimiento_presion,rendimiento_tandas,rendimiento_finales,tiempo_reaccion,anticipacion,alcance,experiencia_penales,cansancio_estimado,riesgo_lesion,ultimo_penal_zona,ultimo_penal_resultado
+1,Emiliano Martínez,Argentina,Derecho,32,Aston Villa,52,14,36,2,26.9,69.2,AC,AI,14,15.8,7,14,7.9,8.8,12.3,9.6,10.6,89,91,70,0.25,86,78,72,Medio,Medio,BC,Atajado
+2,Gerónimo Rulli,Argentina,Derecho,33,Marseille,51,10,40,1,19.6,78.4,AD,MI,12,10.3,14.5,14.5,4.3,9.4,13.7,10.3,11,89,95,71,0.28,71,70,67,Bajo,Medio,MC,Fuera
+3,Juan Musso,Argentina,Izquierdo,31,Atlético de Madrid,48,6,41,1,12.5,85.4,MD,MC,11.8,11.8,11.8,5.9,12.9,18.8,9.4,8.2,9.4,71,73,91,0.33,75,99,62,Alto,Bajo,AI,Fuera
+4,Unai Simón,España,Izquierdo,29,Athletic Club,44,6,37,1,13.6,84.1,AD,AI,13.6,8,14.4,5.6,12.8,11.2,9.6,13.6,11.2,80,75,65,0.37,87,96,90,Alto,Medio,AC,Atajado
+5,David Raya,España,Derecho,30,Arsenal,68,15,50,3,22.1,73.5,AD,AI,14.4,13.5,16.3,5.8,13.5,6.7,12.5,4.8,12.5,87,96,70,0.34,70,79,93,Medio,Bajo,MI,Fuera
+6,Joan García,España,Derecho,25,Barcelona,46,13,31,2,28.3,67.4,AI,AD,16.5,11.8,13.2,6.7,10.9,8.6,14.7,7.2,10.4,92,88,82,0.24,91,89,78,Medio,Bajo,AI,Atajado
