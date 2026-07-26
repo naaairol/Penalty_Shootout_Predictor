@@ -13,6 +13,11 @@ from PySide6.QtWidgets import (
 
 import grafo_penales as gp
 from arbol_arquero import decidir_arquero
+from simulador import (
+    ajustar_probabilidades_condiciones,
+    calcular_efectos_condiciones,
+    reconstruir_resultado_probabilidades,
+)
 
 # Importaciones de los nuevos módulos modularizados
 from utilidades import (
@@ -24,14 +29,14 @@ from utilidades import (
 from hilo_simulacion import Worker
 from componentes import (
     Card, HelpDialog, ImageLabel, CoverImageLabel,
-    GoalHeatmap, InteractiveTree, SimulationField
+    GoalHeatmap, SimulationField
 )
 
 
 class PenaltyVisionApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Penalty Vision Pro")
+        self.setWindowTitle("Penalty Shootout Predictor")
         self.resize(1500, 900)
 
         self.df = pd.DataFrame()
@@ -69,7 +74,6 @@ class PenaltyVisionApp(QMainWindow):
             "conditions": self.build_conditions(),
             "selection": self.build_selection(),
             "dashboard": self.build_dashboard(),
-            "tree": self.build_tree_page(),
             "simulation": self.build_simulation_page(),
             "report": self.build_report(),
         }
@@ -131,7 +135,7 @@ class PenaltyVisionApp(QMainWindow):
         layout = QHBoxLayout(bar)
         layout.setContentsMargins(28, 0, 28, 0)
 
-        brand = QLabel("⚽  PENALTY VISION PRO")
+        brand = QLabel("PENALTY SHOOTOUT PREDICTOR")
         brand.setObjectName("brand")
         layout.addWidget(brand)
         layout.addStretch()
@@ -158,7 +162,7 @@ class PenaltyVisionApp(QMainWindow):
         brand_box = QVBoxLayout()
         brand = QLabel("PENALTY")
         brand.setStyleSheet("font-size:12px;font-weight:900;color:white;")
-        accent = QLabel("VISION PRO")
+        accent = QLabel("SHOOTOUT PREDICTOR")
         accent.setStyleSheet("font-size:12px;font-weight:900;color:#43ed8f;")
         brand_box.addWidget(brand)
         brand_box.addWidget(accent)
@@ -177,7 +181,6 @@ class PenaltyVisionApp(QMainWindow):
             ("conditions", "⌖", "Escenario"),
             ("selection", "♙", "Jugador"),
             ("dashboard", "⌘", "Predicción"),
-            ("tree", "◇", "Árbol"),
             ("simulation", "◉", "Simulación"),
             ("report", "▣", "Reporte"),
         ]
@@ -202,7 +205,7 @@ class PenaltyVisionApp(QMainWindow):
         return nav
 
     def navigate_from_bar(self, page_name):
-        protected = {"dashboard", "tree", "simulation", "report"}
+        protected = {"dashboard", "simulation", "report"}
 
         if page_name in protected and not self.decision:
             QMessageBox.information(
@@ -210,10 +213,6 @@ class PenaltyVisionApp(QMainWindow):
                 "Análisis pendiente",
                 "Primero selecciona los equipos, configura el escenario y analiza un pateador."
             )
-            return
-
-        if page_name == "tree":
-            self.open_tree()
             return
 
         if page_name == "simulation":
@@ -250,7 +249,6 @@ class PenaltyVisionApp(QMainWindow):
             "conditions": "CONDICIONES",
             "selection": "PATEADOR Y ARQUERO",
             "dashboard": "PREDICCIÓN",
-            "tree": "ÁRBOL INTERACTIVO",
             "simulation": "SIMULACIÓN",
             "report": "REPORTE FINAL",
         }
@@ -287,7 +285,7 @@ class PenaltyVisionApp(QMainWindow):
         title_1.setAlignment(Qt.AlignCenter)
         left_layout.addWidget(title_1)
 
-        title_2 = QLabel("VISION PRO")
+        title_2 = QLabel("SHOOTOUT PREDICTOR")
         title_2.setObjectName("heroAccent")
         title_2.setAlignment(Qt.AlignCenter)
         left_layout.addWidget(title_2)
@@ -396,12 +394,12 @@ class PenaltyVisionApp(QMainWindow):
                 "El sistema muestra hacia dónde suele lanzar el jugador."
             ),
             (
-                "05", "Comprende la decisión",
-                "El árbol explica paso a paso por qué se eligió esa zona."
+                "05", "Prueba el penal",
+                "Elige una zona y observa si coincide con la predicción."
             ),
             (
-                "06", "Prueba el penal",
-                "Elige una zona y observa si coincide con la predicción."
+                "06", "Revisa el reporte",
+                "Consulta el escenario, la recomendación y el resultado de la simulación."
             ),
         ]
 
@@ -1162,89 +1160,22 @@ class PenaltyVisionApp(QMainWindow):
 
     def condition_effects(self):
         """Devuelve los ajustes producidos por el contexto del partido."""
-        effects = {
-            "miss_bonus": 0.0,
-            "keeper_bonus": 0.0,
-            "player_bonus": 0.0,
-            "center_bias": 0.0,
-            "low_bias": 0.0,
-            "summary": [],
-        }
-
-        weather = self.context.get("weather", "Normal")
-        pitch = self.context.get("pitch", "Seca")
-        ambient = self.context.get("ambient", "Neutral")
-        noise = self.context.get("noise", "Bajo")
-        pressure = self.context.get("pressure", "baja")
-        deciding = self.context.get("deciding", False)
-
-        if weather == "Lluvia":
-            effects["miss_bonus"] += 4.0
-            effects["low_bias"] += 0.08
-            effects["summary"].append("lluvia: más riesgo de fallo y tiros bajos")
-        elif weather == "Calor intenso":
-            effects["miss_bonus"] += 1.5
-            effects["summary"].append("calor: ligera pérdida de precisión")
-        elif weather == "Frío intenso":
-            effects["miss_bonus"] += 2.0
-            effects["summary"].append("frío: menor precisión")
-
-        if pitch == "Mojada":
-            effects["miss_bonus"] += 3.0
-            effects["low_bias"] += 0.10
-            effects["summary"].append("cancha mojada: balón más rápido")
-        elif pitch == "Pesada / deteriorada":
-            effects["miss_bonus"] += 4.0
-            effects["center_bias"] += 0.08
-            effects["summary"].append("cancha pesada: ejecución más conservadora")
-
-        if ambient == "Público a favor del pateador":
-            effects["player_bonus"] += 3.0
-            effects["summary"].append("ambiente favorable al pateador")
-        elif ambient == "Público a favor del arquero":
-            effects["keeper_bonus"] += 3.0
-            effects["miss_bonus"] += 1.0
-            effects["summary"].append("ambiente favorable al arquero")
-
-        if noise == "Medio":
-            effects["miss_bonus"] += 1.0
-        elif noise == "Alto":
-            effects["miss_bonus"] += 2.5
-            effects["keeper_bonus"] += 1.0
-            effects["summary"].append("ruido alto: mayor tensión")
-
-        if pressure == "alta":
-            effects["miss_bonus"] += 4.0
-            effects["keeper_bonus"] += 2.0
-            effects["summary"].append("presión alta")
-
-        if deciding:
-            effects["miss_bonus"] += 3.0
-            effects["keeper_bonus"] += 2.0
-            effects["summary"].append("penal decisivo")
-
-        return effects
+        return calcular_efectos_condiciones(
+            clima=self.context.get("weather", "Normal"),
+            cancha=self.context.get("pitch", "Seca"),
+            ambiente=self.context.get("ambient", "Neutral"),
+            ruido=self.context.get("noise", "Bajo"),
+            fase=self.context.get("phase", "Octavos"),
+            presion=self.context.get("pressure", "baja"),
+            decisivo=self.context.get("deciding", False),
+        )
 
     def adjusted_player_probabilities(self, probabilities):
-        effects = self.condition_effects()
-        adjusted = {
-            zone: max(0.01, float(value))
-            for zone, value in probabilities.items()
-        }
-
-        if effects["low_bias"]:
-            for zone in ("BI", "BC", "BD"):
-                adjusted[zone] *= 1.0 + effects["low_bias"]
-
-        if effects["center_bias"]:
-            for zone in ("AC", "MC", "BC"):
-                adjusted[zone] *= 1.0 + effects["center_bias"]
-
-        total = sum(adjusted.values()) or 1.0
-        return {
-            zone: value * 100.0 / total
-            for zone, value in adjusted.items()
-        }
+        """Aplica clima, cancha y contexto a las probabilidades por zona."""
+        return ajustar_probabilidades_condiciones(
+            probabilities,
+            self.condition_effects(),
+        )
 
     def simulated_heatmap(self, probabilities, n=2000):
         zones = list(probabilities.keys())
@@ -1396,15 +1327,23 @@ class PenaltyVisionApp(QMainWindow):
         self.context["keeper"] = self.keeper.currentText()
 
         self.raw_player_zone_probs = self.probs["probabilidades"]
+
+        # Aplicar lluvia, cancha, ruido, fase, presión y penal decisivo.
         self.player_zone_probs = self.adjusted_player_probabilities(
             self.raw_player_zone_probs
         )
+
+        # Recalcular zona favorita, segunda zona y confianza después
+        # de aplicar las condiciones. Así la decisión usa los datos ajustados.
+        adjusted_result = reconstruir_resultado_probabilidades(
+            self.probs,
+            self.player_zone_probs,
+        )
+        self.adjusted_probs = adjusted_result
+
         self.keeper_zone_probs = self.keeper_probabilities(
             self.context["keeper"]
         )
-
-        adjusted_result = dict(self.probs)
-        adjusted_result["probabilidades"] = self.player_zone_probs
 
         if self.context.get("analysis_mode") == "pateador":
             self.decision = self.recommend_for_kicker(
@@ -1612,12 +1551,12 @@ class PenaltyVisionApp(QMainWindow):
         )
         nav.addStretch()
 
-        self.tree_button = self.button(
-            "VER CÓMO SE TOMÓ LA DECISIÓN   →",
-            self.open_tree
+        self.simulation_button = self.button(
+            "PROBAR LA ESTRATEGIA   →",
+            self.prepare_simulation
         )
-        self.tree_button.setEnabled(False)
-        nav.addWidget(self.tree_button)
+        self.simulation_button.setEnabled(False)
+        nav.addWidget(self.simulation_button)
         root.addLayout(nav)
         return w
 
@@ -1632,7 +1571,7 @@ class PenaltyVisionApp(QMainWindow):
         self.heatmap.hide()
         self.heat_legend.hide()
         self.heat_waiting.show()
-        self.tree_button.setEnabled(False)
+        self.simulation_button.setEnabled(False)
 
         if mode == "arquero":
             objective = (
@@ -1673,11 +1612,16 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_summary.setText("Procesando simulaciones en paralelo…")
 
         self.worker = Worker(
-            self.context["player"],
-            self.context["keeper"],
-            SIMULACIONES_PREDETERMINADAS,
-            self.context["pressure"],
-            self.context["deciding"],
+            jugador=self.context["player"],
+            arquero=self.context["keeper"],
+            n=SIMULACIONES_PREDETERMINADAS,
+            presion=self.context["pressure"],
+            decisivo=self.context["deciding"],
+            clima=self.context.get("weather", "Normal"),
+            cancha=self.context.get("pitch", "Seca"),
+            ambiente=self.context.get("ambient", "Neutral"),
+            ruido=self.context.get("noise", "Bajo"),
+            fase=self.context.get("phase", "Octavos"),
         )
         self.worker.listo.connect(self.monte_carlo_done)
         self.worker.error.connect(self.monte_carlo_error)
@@ -1688,9 +1632,11 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_button.setEnabled(True)
         self.sim_result = result
 
-        self.simulated_zone_probs = self.simulated_heatmap(
+        # Este mapa proviene de las simulaciones multiproceso reales.
+        # Ya incluye lluvia, cancha, ruido, fase, presión y penal decisivo.
+        self.simulated_zone_probs = result.get(
+            "probabilidades_simuladas",
             self.player_zone_probs,
-            SIMULACIONES_PREDETERMINADAS,
         )
 
         mode = self.context.get("analysis_mode", "arquero")
@@ -1701,9 +1647,10 @@ class PenaltyVisionApp(QMainWindow):
             heading = "RECOMENDACIÓN PARA EL ARQUERO"
             action = "Lanzarse a"
             explanation = (
-                "El mapa muestra dónde terminaron los disparos en las "
-                "2.000 simulaciones. La recomendación señala la zona más "
-                "conveniente para intentar anticipar al rival."
+                "El mapa muestra las zonas reales de los disparos que no "
+                "salieron fuera durante las 2.000 simulaciones. Todas las "
+                "condiciones seleccionadas fueron aplicadas dentro del "
+                "multiprocesamiento."
             )
         else:
             score_values = self.decision.get("scores", {})
@@ -1716,7 +1663,8 @@ class PenaltyVisionApp(QMainWindow):
             action = "Disparar a"
             explanation = (
                 "El mapa combina la capacidad del pateador con las zonas "
-                "menos cubiertas por el arquero rival."
+                "menos cubiertas por el arquero rival. Las probabilidades "
+                "del pateador ya incluyen las condiciones del partido."
             )
 
         self.heatmap.set_data(heat_values, zone)
@@ -1736,119 +1684,31 @@ class PenaltyVisionApp(QMainWindow):
             self.decision["confianza_decision"].upper()
         )
 
+        # No se vuelven a sumar bonos aquí. Los resultados ya fueron
+        # calculados con las condiciones dentro de simulador.py.
         r = result["resultados"]
-        effects = self.condition_effects()
-        adjusted_miss = min(
-            100.0,
-            float(r["fallado"]) + effects["miss_bonus"]
-        )
-        adjusted_goal = max(
-            0.0,
-            float(r["gol"]) - effects["miss_bonus"] * 0.65
-        )
-        adjusted_save = max(
-            0.0,
-            100.0 - adjusted_goal - adjusted_miss
-        )
 
         self.sim_summary.setText(
-            f"<b>Resultado general de 2.000 simulaciones</b><br><br>"
-            f"Gol: <b>{adjusted_goal:.1f}%</b><br>"
-            f"Atajada: <b>{adjusted_save:.1f}%</b><br>"
-            f"Fallo: <b>{adjusted_miss:.1f}%</b>"
+            f"<b>Resultado general de "
+            f"{result['n_simulaciones']:,} simulaciones</b><br><br>"
+            f"Gol: <b>{float(r['gol']):.1f}%</b><br>"
+            f"Atajada: <b>{float(r['atajada']):.1f}%</b><br>"
+            f"Fallo: <b>{float(r['fallado']):.1f}%</b>"
         )
 
-        self.tree_button.setEnabled(True)
+        effects = result.get("efectos_condiciones", {})
+        summary = effects.get("summary", [])
+        self.condition_result.setText(
+            "<b>Condiciones aplicadas dentro de la simulación:</b><br>"
+            + (" · ".join(summary) if summary else "Condiciones neutrales")
+        )
+
+        self.simulation_button.setEnabled(True)
 
     def monte_carlo_error(self, message):
         self.progress.hide()
         self.sim_button.setEnabled(True)
         QMessageBox.critical(self, "Error de simulación", message)
-
-    def build_tree_page(self):
-        w = QWidget()
-        root = QVBoxLayout(w)
-        root.setContentsMargins(26, 18, 26, 22)
-        root.setSpacing(12)
-
-        title_box = QVBoxLayout()
-        title_box.addWidget(QLabel("ÁRBOL DE DECISIÓN", objectName="pageTitle"))
-        sub = QLabel(
-            "El árbol usa los resultados del grafo y de las simulaciones "
-            "para escoger una acción."
-        )
-        sub.setObjectName("subtitle")
-        sub.setWordWrap(True)
-        title_box.addWidget(sub)
-        root.addLayout(title_box)
-
-        content = QHBoxLayout()
-        content.setSpacing(16)
-
-        tree_layout = QVBoxLayout()
-        tree_layout.setContentsMargins(12, 10, 12, 10)
-        tree_layout.addWidget(QLabel("RECORRIDO DEL ÁRBOL", objectName="section"))
-
-        self.interactive_tree = InteractiveTree()
-        tree_layout.addWidget(self.interactive_tree, 1)
-        content.addWidget(Card(tree_layout, "majorCard"), 3)
-
-        explanation = QVBoxLayout()
-        explanation.setContentsMargins(12, 10, 12, 10)
-        explanation.setSpacing(10)
-        explanation.addWidget(QLabel("EXPLICACIÓN", objectName="section"))
-
-        explanation_text = QLabel(
-            "Haz clic en una pregunta del árbol para conocer por qué "
-            "esa condición es importante."
-        )
-        explanation_text.setWordWrap(True)
-        explanation_text.setStyleSheet(
-            "font-size:14px;padding:12px;background:#06131d;border-radius:10px;"
-        )
-        explanation.addWidget(explanation_text)
-
-        self.interactive_tree.info.setParent(None)
-        self.interactive_tree.info = explanation_text
-
-        explanation.addWidget(QLabel("RUTA REAL UTILIZADA", objectName="section"))
-
-        self.tree_route = QLabel("")
-        self.tree_route.setWordWrap(True)
-        self.tree_route.setStyleSheet(
-            "font-size:14px;padding:14px;background:#050c13;"
-            "border:1px solid #172d3a;border-radius:10px;"
-        )
-        explanation.addWidget(self.tree_route)
-
-        note = QLabel(
-            "La ruta muestra las preguntas respondidas antes de producir "
-            "la recomendación."
-        )
-        note.setObjectName("muted")
-        note.setWordWrap(True)
-        explanation.addWidget(note)
-        explanation.addStretch()
-
-        content.addWidget(Card(explanation, "majorCard"), 2)
-        root.addLayout(content, 1)
-
-        nav = QHBoxLayout()
-        nav.addWidget(
-            self.button("←  PREDICCIÓN", lambda: self.go("dashboard"), True)
-        )
-        nav.addStretch()
-        nav.addWidget(
-            self.button("PROBAR LA ESTRATEGIA   →", self.prepare_simulation)
-        )
-        root.addLayout(nav)
-        return w
-
-    def open_tree(self):
-        route = self.decision.get("ruta", [])
-        self.interactive_tree.set_path(route)
-        self.tree_route.setText("  →  ".join(route))
-        self.go("tree")
 
     def build_simulation_page(self):
         w = QWidget()
@@ -2013,7 +1873,7 @@ class PenaltyVisionApp(QMainWindow):
 
         nav = QHBoxLayout()
         nav.addWidget(
-            self.button("←  ÁRBOL", lambda: self.go("tree"), True)
+            self.button("←  PREDICCIÓN", lambda: self.go("dashboard"), True)
         )
         nav.addStretch()
         nav.addWidget(
@@ -2105,36 +1965,69 @@ class PenaltyVisionApp(QMainWindow):
         self.go("simulation")
 
     def manual_shot(self, chosen_zone):
+        """Ejecuta una jugada interactiva según el modo seleccionado.
+
+        En modo arquero, el usuario elige hacia dónde se lanza el arquero y
+        el disparo del pateador se sortea con su distribución de probabilidades.
+        En modo pateador, el usuario elige la zona del disparo y el movimiento
+        del arquero se sortea con su perfil de cobertura.
+
+        La recomendación representa la mejor decisión estadística, pero no
+        garantiza que una jugada individual termine en atajada o gol.
+        """
         mode = self.context.get("analysis_mode", "arquero")
         recommended_zone = self.decision["zona_lanzamiento"]
+        effects = self.condition_effects()
 
         if mode == "arquero":
+            # El usuario decide a qué zona se lanza el arquero.
             keeper_zone = chosen_zone
+
+            # El pateador no está obligado a disparar a la zona predicha.
+            # La zona real se sortea utilizando sus probabilidades ajustadas.
             distribution = getattr(
                 self,
                 "simulated_zone_probs",
-                self.player_zone_probs
+                self.player_zone_probs,
             )
             shot_zone = self.weighted_zone(distribution)
             shot_probability = float(distribution.get(shot_zone, 0.0))
             same_zone = keeper_zone == shot_zone
 
-            effects = self.condition_effects()
+            # Las condiciones aumentan o reducen el riesgo de fallo.
             miss_probability = 7.0 + effects["miss_bonus"]
-            save_probability = (
-                min(78.0, 58.0 + effects["keeper_bonus"])
-                if same_zone else 0.0
+            miss_probability -= effects["player_bonus"]
+            miss_probability = min(45.0, max(2.0, miss_probability))
+
+            if same_zone:
+                # El arquero acertó exactamente la zona del disparo.
+                save_probability = min(
+                    78.0,
+                    58.0 + effects["keeper_bonus"],
+                )
+            else:
+                # Aunque no acierte la zona, conserva una pequeña posibilidad
+                # de atajar por reflejos o reacción.
+                save_probability = min(
+                    12.0,
+                    max(3.0, 5.0 + effects["keeper_bonus"] * 0.25),
+                )
+
+            # Evita que la suma de probabilidades supere el 100 %.
+            save_probability = min(
+                save_probability,
+                max(0.0, 100.0 - miss_probability),
             )
             goal_probability = max(
                 0.0,
-                100.0 - save_probability - miss_probability
+                100.0 - save_probability - miss_probability,
             )
 
             roll = random.random() * 100
-            if same_zone and roll < save_probability:
-                outcome = "ATAJADA"
-            elif roll < save_probability + miss_probability:
+            if roll < miss_probability:
                 outcome = "FALLADO"
+            elif roll < miss_probability + save_probability:
+                outcome = "ATAJADA"
             else:
                 outcome = "GOL"
 
@@ -2143,34 +2036,54 @@ class PenaltyVisionApp(QMainWindow):
                 f"{NOMBRES[keeper_zone]} ({keeper_zone})"
             )
             action_detail = (
-                f"El pateador disparó a {NOMBRES[shot_zone]} ({shot_zone})."
+                f"El pateador disparó a "
+                f"{NOMBRES[shot_zone]} ({shot_zone})."
             )
-            most_likely = max(
-                self.player_zone_probs,
-                key=self.player_zone_probs.get
-            )
-            comparison = (
-                "✓ El arquero adivinó la zona del disparo."
-                if same_zone
-                else (
-                    f"El arquero se lanzó a otra zona. En esta jugada simulada "
-                    f"el pateador fue a {shot_zone}; la zona más probable era "
-                    f"{most_likely}. Una probabilidad alta no significa que "
-                    f"siempre ocurrirá."
+
+            prediction_hit = recommended_zone == shot_zone
+            followed_recommendation = keeper_zone == recommended_zone
+
+            if same_zone:
+                comparison = (
+                    "✓ El arquero cubrió la misma zona del disparo. "
+                    "La decisión coincidió con la jugada simulada."
                 )
-            )
+            elif followed_recommendation:
+                comparison = (
+                    f"Seguiste la mejor recomendación estadística, pero en "
+                    f"esta jugada el pateador disparó a "
+                    f"{NOMBRES[shot_zone]} ({shot_zone}). La predicción indica "
+                    f"la zona más conveniente para cubrir, pero no garantiza "
+                    f"el resultado de un solo penal."
+                )
+            elif prediction_hit:
+                comparison = (
+                    f"La predicción sí anticipó el disparo en "
+                    f"{NOMBRES[recommended_zone]} ({recommended_zone}), pero "
+                    f"el arquero eligió {NOMBRES[keeper_zone]} ({keeper_zone})."
+                )
+            else:
+                comparison = (
+                    f"El arquero eligió {NOMBRES[keeper_zone]} ({keeper_zone}) "
+                    f"y el pateador disparó a "
+                    f"{NOMBRES[shot_zone]} ({shot_zone})."
+                )
+
             animation_shot = shot_zone
             animation_keeper = keeper_zone
-            historical_value = shot_probability
-            rank_probs = self.player_zone_probs
+            estimated_value = shot_probability
+            rank_probs = distribution
 
             self.context["manual_keeper_zone"] = keeper_zone
             self.context["manual_shot_zone"] = shot_zone
 
         else:
+            # El usuario decide hacia dónde dispara el pateador.
             shot_zone = chosen_zone
             keeper_zone = self.weighted_zone(self.keeper_zone_probs)
-            shot_probability = float(self.player_zone_probs.get(shot_zone, 0.0))
+            shot_probability = float(
+                self.player_zone_probs.get(shot_zone, 0.0)
+            )
             keeper_probability = float(
                 self.keeper_zone_probs.get(keeper_zone, 0.0)
             )
@@ -2179,33 +2092,42 @@ class PenaltyVisionApp(QMainWindow):
             max_player = max(self.player_zone_probs.values()) or 1.0
             player_strength = shot_probability / max_player
 
-            effects = self.condition_effects()
-            miss_probability = max(
-                4.0,
-                15.0 - 9.0 * player_strength
+            miss_probability = (
+                15.0
+                - 9.0 * player_strength
                 + effects["miss_bonus"]
                 - effects["player_bonus"]
             )
+            miss_probability = min(45.0, max(4.0, miss_probability))
 
-            save_probability = (
-                min(
+            if same_zone:
+                save_probability = min(
                     78.0,
                     42.0
                     + keeper_probability * 0.55
-                    + effects["keeper_bonus"]
+                    + effects["keeper_bonus"],
                 )
-                if same_zone else 0.0
+            else:
+                # El arquero aún puede reaccionar aunque haya elegido otra zona.
+                save_probability = min(
+                    12.0,
+                    max(3.0, 4.0 + effects["keeper_bonus"] * 0.25),
+                )
+
+            save_probability = min(
+                save_probability,
+                max(0.0, 100.0 - miss_probability),
             )
             goal_probability = max(
                 0.0,
-                100.0 - save_probability - miss_probability
+                100.0 - save_probability - miss_probability,
             )
 
             roll = random.random() * 100
-            if same_zone and roll < save_probability:
-                outcome = "ATAJADA"
-            elif roll < save_probability + miss_probability:
+            if roll < miss_probability:
                 outcome = "FALLADO"
+            elif roll < miss_probability + save_probability:
+                outcome = "ATAJADA"
             else:
                 outcome = "GOL"
 
@@ -2217,14 +2139,27 @@ class PenaltyVisionApp(QMainWindow):
                 f"El arquero se lanzó a "
                 f"{NOMBRES[keeper_zone]} ({keeper_zone})."
             )
-            comparison = (
-                "El arquero cubrió la misma zona."
-                if same_zone
-                else "✓ El disparo evitó la zona elegida por el arquero."
-            )
+
+            followed_recommendation = shot_zone == recommended_zone
+
+            if same_zone:
+                comparison = (
+                    "El arquero cubrió la misma zona del disparo."
+                )
+            elif followed_recommendation:
+                comparison = (
+                    "✓ El disparo siguió la recomendación y evitó la zona "
+                    "elegida por el arquero en esta jugada."
+                )
+            else:
+                comparison = (
+                    "El disparo evitó la zona del arquero, aunque no siguió "
+                    "la recomendación principal del sistema."
+                )
+
             animation_shot = shot_zone
             animation_keeper = keeper_zone
-            historical_value = shot_probability
+            estimated_value = shot_probability
             rank_probs = self.player_zone_probs
 
             self.context["manual_shot_zone"] = shot_zone
@@ -2233,10 +2168,11 @@ class PenaltyVisionApp(QMainWindow):
         ranking = sorted(
             rank_probs.items(),
             key=lambda item: item[1],
-            reverse=True
+            reverse=True,
         )
         rank = next(
-            i + 1 for i, (zone, _) in enumerate(ranking)
+            i + 1
+            for i, (zone, _) in enumerate(ranking)
             if zone == shot_zone
         )
 
@@ -2265,8 +2201,8 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_outcome_text.setText(outcome_texts[outcome])
         self.sim_zone_detail.setText(selected_label)
         self.sim_frequency_detail.setText(
-            f"{action_detail}\nFrecuencia histórica del disparo: "
-            f"{historical_value:.1f}%"
+            f"{action_detail}\n"
+            f"Probabilidad estimada de esa zona: {estimated_value:.1f}%"
         )
         self.sim_rank_detail.setText(f"Ranking de la zona: {rank}/9")
         self.sim_goal_detail.setText(f"Gol: {goal_probability:.1f}%")
@@ -2278,28 +2214,33 @@ class PenaltyVisionApp(QMainWindow):
         )
         self.sim_probability_bar.setValue(round(goal_probability))
 
-        if (
-            (mode == "arquero" and chosen_zone == recommended_zone)
-            or (mode == "pateador" and shot_zone == recommended_zone)
-        ):
+        followed_system = (
+            mode == "arquero" and chosen_zone == recommended_zone
+        ) or (
+            mode == "pateador" and shot_zone == recommended_zone
+        )
+
+        if followed_system:
             self.sim_tree_match.setStyleSheet(
                 "font-size:16px;font-weight:800;color:#55f39a;"
             )
             self.sim_tree_match.setText(
-                f"✓ Seguiste la recomendación del sistema.\n{comparison}"
+                "✓ Seguiste la recomendación estadística del sistema.\n"
+                f"{comparison}"
             )
         else:
             self.sim_tree_match.setStyleSheet(
                 "font-size:16px;font-weight:800;color:#ffca56;"
             )
             self.sim_tree_match.setText(
-                f"No seguiste la recomendación principal.\n{comparison}"
+                "No seguiste la recomendación principal.\n"
+                f"{comparison}"
             )
 
         self.sim_field.play(
             animation_shot,
             animation_keeper,
-            outcome
+            outcome,
         )
 
     def build_report(self):
@@ -2452,7 +2393,7 @@ class PenaltyVisionApp(QMainWindow):
 def main():
     mp.freeze_support()
     app = QApplication(sys.argv)
-    app.setApplicationName("Penalty Vision Pro")
+    app.setApplicationName("Penalty Shootout Predictor")
     app.setStyle("Fusion")
 
     estilo = cargar_estilo()

@@ -28,11 +28,11 @@ class Card(QFrame):
 class HelpDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Cómo utilizar Penalty Vision Pro")
+        self.setWindowTitle("Cómo utilizar Penalty Shootout Predictor")
         self.resize(760, 650)
 
         root = QVBoxLayout(self)
-        title = QLabel("¿CÓMO UTILIZAR PENALTY VISION PRO?")
+        title = QLabel("¿Cómo utilizar Penalty Shootout Predictor?")
         title.setObjectName("pageTitle")
         root.addWidget(title)
 
@@ -53,12 +53,10 @@ class HelpDialog(QDialog):
              "Elige el pateador, el arquero y la cantidad de simulaciones."),
             ("04", "Revisa la predicción",
              "Observa el mapa de calor, las probabilidades y la recomendación."),
-            ("05", "Explora el árbol",
-             "Presiona los nodos para conocer por qué el sistema tomó cada decisión."),
-            ("06", "Prueba la simulación",
+            ("05", "Prueba la simulación",
              "Selecciona manualmente una de las nueve zonas del arco."),
-            ("07", "Compara el resultado",
-             "La aplicación compara tu elección con el patrón histórico y la decisión del arquero."),
+            ("06", "Compara el resultado",
+             "La aplicación compara tu elección con el patrón histórico y la recomendación."),
         ]
 
         scroll = QScrollArea()
@@ -249,88 +247,6 @@ class GoalHeatmap(QWidget):
                     Qt.AlignCenter, f"{p:.1f}%"
                 )
 
-
-class InteractiveTree(QWidget):
-    node_clicked = Signal(str)
-
-    def __init__(self):
-        super().__init__()
-        self.nodes = {}
-        self.route = []
-        self.info = QLabel("Selecciona un nodo para conocer su explicación.")
-        self.info.setWordWrap(True)
-        self.info.setObjectName("muted")
-
-        root = QVBoxLayout(self)
-        title = QLabel("ÁRBOL DE DECISIÓN INTERACTIVO")
-        title.setObjectName("section")
-        root.addWidget(title)
-
-        grid = QGridLayout()
-        grid.setHorizontalSpacing(18)
-        grid.setVerticalSpacing(18)
-
-        definitions = [
-            ("inicio", "¿Existe zona favorita?", 0, 1),
-            ("confianza", "¿Confianza alta?", 1, 0),
-            ("presion", "¿Presión alta?", 1, 2),
-            ("segunda", "Segunda zona", 2, 0),
-            ("favorita", "Zona favorita", 2, 1),
-            ("baja", "Mejor zona baja", 2, 2),
-            ("decision", "DECISIÓN FINAL", 3, 1),
-        ]
-
-        for key, text, row, col in definitions:
-            btn = QPushButton(text)
-            btn.setObjectName("treeNode")
-            btn.clicked.connect(lambda _, k=key: self.explain(k))
-            self.nodes[key] = btn
-            grid.addWidget(btn, row, col)
-
-        root.addLayout(grid)
-        root.addWidget(Card(QVBoxLayout(), "panel"))
-        root.itemAt(root.count() - 1).widget().layout().addWidget(self.info)
-
-    def set_path(self, route):
-        self.route = route or []
-        text_route = " ".join(str(x).lower() for x in self.route)
-
-        for key, btn in self.nodes.items():
-            active = any(token in text_route for token in key.split("_"))
-            btn.setObjectName("treeNodeActive" if active else "treeNode")
-            btn.style().unpolish(btn)
-            btn.style().polish(btn)
-
-        self.nodes["decision"].setObjectName("treeNodeActive")
-        self.nodes["decision"].style().unpolish(self.nodes["decision"])
-        self.nodes["decision"].style().polish(self.nodes["decision"])
-
-    def explain(self, key):
-        explanations = {
-            "inicio":
-                "El sistema comprueba si alguna zona concentra una probabilidad "
-                "suficientemente mayor que las demás.",
-            "confianza":
-                "La confianza depende de qué tan dominante es la primera zona "
-                "respecto de la segunda y del resto del arco.",
-            "presion":
-                "En escenarios de presión alta o penal decisivo se priorizan "
-                "decisiones más conservadoras y zonas históricamente repetidas.",
-            "segunda":
-                "Cuando la confianza no es suficiente, la segunda zona más "
-                "frecuente puede ser una alternativa razonable.",
-            "favorita":
-                "La zona favorita es la que posee la mayor probabilidad histórica "
-                "estimada para el pateador seleccionado.",
-            "baja":
-                "Cuando la confianza es baja y el penal es decisivo, el árbol puede "
-                "priorizar una zona baja con buen peso histórico.",
-            "decision":
-                "Este nodo resume la recomendación final producida después de "
-                "recorrer las reglas anteriores.",
-        }
-        self.info.setText(explanations[key])
-        self.node_clicked.emit(key)
 
 
 class GoalOverlay(QWidget):
