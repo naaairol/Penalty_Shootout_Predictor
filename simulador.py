@@ -90,7 +90,7 @@ def calcular_efectos_condiciones(
         efectos["summary"].append(
             "calor intenso: ligera pérdida de precisión"
         )
-    elif clima_n in {"frío intenso", "frio intenso"}:
+    elif clima_n in {"frío intenso"}:
         efectos["miss_bonus"] += 2.0
         efectos["summary"].append(
             "frío intenso: menor precisión"
@@ -102,7 +102,7 @@ def calcular_efectos_condiciones(
         efectos["summary"].append(
             "cancha mojada: balón más rápido y mayor tendencia baja"
         )
-    elif cancha_n in {"pesada / deteriorada", "pesada", "deteriorada"}:
+    elif cancha_n in {"pesada / deteriorada"}:
         efectos["miss_bonus"] += 4.0
         efectos["center_bias"] += 0.08
         efectos["summary"].append(

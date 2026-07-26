@@ -493,3 +493,188 @@ QScrollArea, QGraphicsView, QWidget#welcomePage, QWidget#simulationField {
     border: none;
     background: transparent;
 }
+
+/* --- Barra de Navegación Inferior --- */
+QLabel#navBrand {
+    font-size: 12px;
+    font-weight: 900;
+    color: white;
+}
+
+QLabel#navAccent {
+    font-size: 12px;
+    font-weight: 900;
+    color: #43ed8f;
+}
+
+/* --- Página de Bienvenida --- */
+QFrame#heroLine {
+    background: #1e3847;
+    border: none;
+}
+
+/* --- Página de Ayuda --- */
+QLabel#helpCardHeading {
+    font-size: 18px;
+    font-weight: 850;
+}
+
+/* --- Página de Condiciones --- */
+QLabel#modeBadge {
+    color: #43ed8f;
+    background: #0b2431;
+    border: 1px solid #1a6b48;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-weight: 800;
+}
+
+QLabel#conditionFormLabel {
+    font-size: 12px;
+    font-weight: 700;
+    color: #a9bac4;
+}
+
+QLabel#conditionHelpText {
+    color: #9fb0ba;
+    font-size: 12px;
+}
+
+QFrame#conditionHelpCard {
+    background: #06121b;
+    border: 1px solid #1d3745;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+/* --- Página de Selección de Jugador/Arquero --- */
+QLabel#selectionTeamsBadge {
+    color: white;
+    background: #0b2431;
+    border: 1px solid #2a4b5d;
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-weight: 900;
+}
+
+QLabel#selectionSimsBadge {
+    color: #43ed8f;
+    background: #0b2431;
+    border: 1px solid #1a6b48;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-weight: 800;
+}
+
+QLabel#playerInfoPanel, QLabel#keeperInfoPanel {
+    font-size: 14px;
+    padding: 14px;
+    background: #050c13;
+    border: 1px solid #172d3a;
+    border-radius: 10px;
+}
+
+/* --- Dashboard --- */
+QLabel#heatWaitingLabel {
+    font-size: 16px;
+    color: #8aa0ad;
+    padding: 28px;
+    background: #050c13;
+    border: 1px dashed #29495a;
+    border-radius: 12px;
+}
+
+QLabel#analysisObjectivePanel {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px;
+    background: #06131d;
+    border-radius: 10px;
+}
+
+QLabel#recommendationPanel {
+    font-size: 14px;
+    padding: 12px;
+    background: #050c13;
+    border: 1px solid #172d3a;
+    border-radius: 10px;
+}
+
+QLabel#confidenceLabel {
+    font-size: 12px;
+    font-weight: 800;
+    color: #9fb0ba;
+}
+
+QLabel#confidenceValue {
+    font-size: 24px;
+    font-weight: 900;
+    color: #43ed8f;
+}
+
+QLabel#conditionResultPanel {
+    font-size: 12px;
+    color: #9fb0ba;
+    padding: 10px;
+    background: #06121b;
+    border-radius: 10px;
+}
+
+QLabel#simSummaryPanel {
+    font-size: 13px;
+    padding: 11px;
+    background: #050c13;
+    border-radius: 10px;
+}
+
+/* --- Simulación Interactiva --- */
+QFrame#simulationFieldCard {
+    background: #050d14;
+    border: 1px solid #203a49;
+    border-radius: 16px;
+    padding: 4px;
+}
+
+QLabel#simOutcome {
+    font-size: 39px;
+    font-weight: 900;
+    color: #8aa0ad;
+    background: #050c13;
+    border-radius: 10px;
+}
+
+QLabel#simOutcome[outcome="GOL"] { color: #55f39a; }
+QLabel#simOutcome[outcome="ATAJADA"] { color: #48c6ff; }
+QLabel#simOutcome[outcome="FALLADO"] { color: #ff5c69; }
+
+QLabel#simDetailZone, QLabel#simDetailFrequency, QLabel#simDetailRank {
+    font-size: 12px;
+}
+
+QLabel#simProbGoal { font-size: 16px; font-weight: 800; color: #55f39a; }
+QLabel#simProbSave { font-size: 16px; font-weight: 800; color: #48c6ff; }
+QLabel#simProbMiss { font-size: 16px; font-weight: 800; color: #ffca56; }
+
+QLabel#simTreeMatch {
+    font-size: 13px;
+    color: #9fb0ba;
+    padding: 8px;
+}
+
+QLabel#simTreeMatch[followed="true"] {
+    font-size: 16px;
+    font-weight: 800;
+    color: #55f39a;
+}
+
+QLabel#simTreeMatch[followed="false"] {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffca56;
+}
+
+/* --- Reporte Final --- */
+QLabel#reportCardLabel {
+    font-size: 14px;
+    padding: 8px;
+}

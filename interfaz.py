@@ -19,7 +19,7 @@ from simulador import (
     reconstruir_resultado_probabilidades,
 )
 
-# Importaciones de los nuevos módulos modularizados
+# Importaciones de los nuevos módulos
 from utilidades import (
     CSV_PATH, ARQUEROS_CSV_PATH, POSIBLES_CSV, SIMULACIONES_PREDETERMINADAS,
     ZONAS, NOMBRES, LOGOS_EQUIPOS, LOGOS_DIR, ARQUEROS_RESPALDO,
@@ -161,9 +161,9 @@ class PenaltyVisionApp(QMainWindow):
 
         brand_box = QVBoxLayout()
         brand = QLabel("PENALTY")
-        brand.setStyleSheet("font-size:12px;font-weight:900;color:white;")
+        brand.setObjectName("navBrand")
         accent = QLabel("SHOOTOUT PREDICTOR")
-        accent.setStyleSheet("font-size:12px;font-weight:900;color:#43ed8f;")
+        accent.setObjectName("navAccent")
         brand_box.addWidget(brand)
         brand_box.addWidget(accent)
 
@@ -292,7 +292,7 @@ class PenaltyVisionApp(QMainWindow):
 
         line = QFrame()
         line.setFixedHeight(2)
-        line.setStyleSheet("background:#1e3847;border:none;")
+        line.setObjectName("heroLine")
         left_layout.addSpacing(14)
         left_layout.addWidget(line)
 
@@ -411,7 +411,7 @@ class PenaltyVisionApp(QMainWindow):
             box.addWidget(n)
 
             h = QLabel(heading)
-            h.setStyleSheet("font-size:18px;font-weight:850;")
+            h.setObjectName("helpCardHeading")
             box.addWidget(h)
 
             d = QLabel(desc)
@@ -683,10 +683,7 @@ class PenaltyVisionApp(QMainWindow):
             else "OBJETIVO: AYUDAR AL PATEADOR"
         )
         badge = QLabel(mode_text)
-        badge.setStyleSheet(
-            "color:#43ed8f;background:#0b2431;border:1px solid #1a6b48;"
-            "border-radius:12px;padding:8px 14px;font-weight:800;"
-        )
+        badge.setObjectName("modeBadge")
         header.addWidget(badge)
         root.addLayout(header)
 
@@ -759,7 +756,7 @@ class PenaltyVisionApp(QMainWindow):
             row = index // 2
             col = (index % 2) * 2
             label = QLabel(text)
-            label.setStyleSheet("font-size:12px;font-weight:700;color:#a9bac4;")
+            label.setObjectName("conditionFormLabel")
             grid.addWidget(label, row * 2, col)
             grid.addWidget(control, row * 2 + 1, col)
 
@@ -777,13 +774,10 @@ class PenaltyVisionApp(QMainWindow):
             "• Cancha pesada: favorece ejecuciones más conservadoras."
         )
         help_text.setWordWrap(True)
-        help_text.setStyleSheet("color:#9fb0ba;font-size:12px;")
+        help_text.setObjectName("conditionHelpText")
         help_layout.addWidget(help_text)
         help_card = Card(help_layout, "panel")
-        help_card.setStyleSheet(
-            "QFrame#panel{background:#06121b;border:1px solid #1d3745;"
-            "border-radius:12px;padding:8px;}"
-        )
+        help_card.setObjectName("conditionHelpCard")
         form_layout.addWidget(help_card)
         form_layout.addStretch()
 
@@ -843,17 +837,11 @@ class PenaltyVisionApp(QMainWindow):
             f"{self.context.get('team_kicking', 'Atacante')}  VS  "
             f"{self.context.get('team_defending', 'Defensor')}"
         )
-        teams.setStyleSheet(
-            "color:white;background:#0b2431;border:1px solid #2a4b5d;"
-            "border-radius:12px;padding:8px 16px;font-weight:900;"
-        )
+        teams.setObjectName("selectionTeamsBadge")
         header.addWidget(teams)
 
         sims = QLabel("2.000 SIMULACIONES")
-        sims.setStyleSheet(
-            "color:#43ed8f;background:#0b2431;border:1px solid #1a6b48;"
-            "border-radius:12px;padding:8px 14px;font-weight:800;"
-        )
+        sims.setObjectName("selectionSimsBadge")
         header.addWidget(sims)
         root.addLayout(header)
 
@@ -879,10 +867,7 @@ class PenaltyVisionApp(QMainWindow):
         self.player_info.setWordWrap(True)
         self.player_info.setAlignment(Qt.AlignTop)
         self.player_info.setMinimumHeight(210)
-        self.player_info.setStyleSheet(
-            "font-size:14px;padding:14px;background:#050c13;"
-            "border:1px solid #172d3a;border-radius:10px;"
-        )
+        self.player_info.setObjectName("playerInfoPanel")
         player_side.addWidget(self.player_info, 1)
         player_content.addLayout(player_side, 1)
         player_layout.addLayout(player_content)
@@ -907,10 +892,7 @@ class PenaltyVisionApp(QMainWindow):
         self.keeper_info.setWordWrap(True)
         self.keeper_info.setAlignment(Qt.AlignTop)
         self.keeper_info.setMinimumHeight(210)
-        self.keeper_info.setStyleSheet(
-            "font-size:14px;padding:14px;background:#050c13;"
-            "border:1px solid #172d3a;border-radius:10px;"
-        )
+        self.keeper_info.setObjectName("keeperInfoPanel")
         keeper_side.addWidget(self.keeper_info, 1)
         keeper_content.addLayout(keeper_side, 1)
         keeper_layout.addLayout(keeper_content)
@@ -1410,11 +1392,7 @@ class PenaltyVisionApp(QMainWindow):
         )
         self.heat_waiting.setAlignment(Qt.AlignCenter)
         self.heat_waiting.setWordWrap(True)
-        self.heat_waiting.setStyleSheet(
-            "font-size:16px;color:#8aa0ad;padding:28px;"
-            "background:#050c13;border:1px dashed #29495a;"
-            "border-radius:12px;"
-        )
+        self.heat_waiting.setObjectName("heatWaitingLabel")
         heat_layout.addWidget(self.heat_waiting, 1)
 
         self.heatmap = GoalHeatmap()
@@ -1445,10 +1423,7 @@ class PenaltyVisionApp(QMainWindow):
         self.analysis_objective = QLabel("")
         self.analysis_objective.setWordWrap(True)
         self.analysis_objective.setAlignment(Qt.AlignTop)
-        self.analysis_objective.setStyleSheet(
-            "font-size:14px;font-weight:700;padding:12px;"
-            "background:#06131d;border-radius:10px;"
-        )
+        self.analysis_objective.setObjectName("analysisObjectivePanel")
         objective_box.addWidget(self.analysis_objective)
         right_layout.addWidget(Card(objective_box, "panel"))
 
@@ -1462,26 +1437,19 @@ class PenaltyVisionApp(QMainWindow):
         self.recommendation.setWordWrap(True)
         self.recommendation.setAlignment(Qt.AlignTop)
         self.recommendation.setMinimumHeight(112)
-        self.recommendation.setStyleSheet(
-            "font-size:14px;padding:12px;background:#050c13;"
-            "border:1px solid #172d3a;border-radius:10px;"
-        )
+        self.recommendation.setObjectName("recommendationPanel")
         recommendation_box.addWidget(self.recommendation)
         right_layout.addWidget(Card(recommendation_box, "panel"))
 
         confidence_box = QHBoxLayout()
         confidence_box.setContentsMargins(12, 7, 12, 7)
         confidence_label = QLabel("CONFIANZA")
-        confidence_label.setStyleSheet(
-            "font-size:12px;font-weight:800;color:#9fb0ba;"
-        )
+        confidence_label.setObjectName("confidenceLabel")
         confidence_box.addWidget(confidence_label)
         confidence_box.addStretch()
 
         self.confidence = QLabel("PENDIENTE")
-        self.confidence.setStyleSheet(
-            "font-size:24px;font-weight:900;color:#43ed8f;"
-        )
+        self.confidence.setObjectName("confidenceValue")
         confidence_box.addWidget(self.confidence)
         right_layout.addWidget(Card(confidence_box, "panel"))
 
@@ -1495,10 +1463,7 @@ class PenaltyVisionApp(QMainWindow):
         self.condition_result.setWordWrap(True)
         self.condition_result.setAlignment(Qt.AlignTop)
         self.condition_result.setMinimumHeight(76)
-        self.condition_result.setStyleSheet(
-            "font-size:12px;color:#9fb0ba;padding:10px;"
-            "background:#06121b;border-radius:10px;"
-        )
+        self.condition_result.setObjectName("conditionResultPanel")
         conditions_box.addWidget(self.condition_result)
         right_layout.addWidget(Card(conditions_box, "panel"))
 
@@ -1512,10 +1477,7 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_summary.setWordWrap(True)
         self.sim_summary.setAlignment(Qt.AlignTop)
         self.sim_summary.setMinimumHeight(86)
-        self.sim_summary.setStyleSheet(
-            "font-size:13px;padding:11px;background:#050c13;"
-            "border-radius:10px;"
-        )
+        self.sim_summary.setObjectName("simSummaryPanel")
         results_box.addWidget(self.sim_summary)
         right_layout.addWidget(Card(results_box, "panel"))
 
@@ -1747,10 +1709,7 @@ class PenaltyVisionApp(QMainWindow):
         field_layout.addWidget(self.sim_field)
 
         field_card = Card(field_layout, "majorCard")
-        field_card.setStyleSheet(
-            "QFrame#majorCard{background:#050d14;"
-            "border:1px solid #203a49;border-radius:16px;padding:4px;}"
-        )
+        field_card.setObjectName("simulationFieldCard")
         body.addWidget(field_card, 3)
 
         panel_widget = QWidget()
@@ -1765,10 +1724,7 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_outcome = QLabel("—")
         self.sim_outcome.setAlignment(Qt.AlignCenter)
         self.sim_outcome.setMinimumHeight(66)
-        self.sim_outcome.setStyleSheet(
-            "font-size:39px;font-weight:900;color:#8aa0ad;"
-            "background:#050c13;border-radius:10px;"
-        )
+        self.sim_outcome.setObjectName("simOutcome")
         outcome_layout.addWidget(self.sim_outcome)
 
         self.sim_outcome_text = QLabel(
@@ -1789,17 +1745,17 @@ class PenaltyVisionApp(QMainWindow):
 
         self.sim_zone_detail = QLabel("Zona elegida: —")
         self.sim_zone_detail.setWordWrap(True)
-        self.sim_zone_detail.setStyleSheet("font-size:12px;")
+        self.sim_zone_detail.setObjectName("simDetailZone")
         detail_layout.addWidget(self.sim_zone_detail)
 
         self.sim_frequency_detail = QLabel("Movimiento rival: —")
         self.sim_frequency_detail.setWordWrap(True)
-        self.sim_frequency_detail.setStyleSheet("font-size:12px;")
+        self.sim_frequency_detail.setObjectName("simDetailFrequency")
         detail_layout.addWidget(self.sim_frequency_detail)
 
         self.sim_rank_detail = QLabel("Ranking: —")
         self.sim_rank_detail.setWordWrap(True)
-        self.sim_rank_detail.setStyleSheet("font-size:12px;")
+        self.sim_rank_detail.setObjectName("simDetailRank")
         detail_layout.addWidget(self.sim_rank_detail)
 
         panel_layout.addWidget(Card(detail_layout, "panel"))
@@ -1811,21 +1767,15 @@ class PenaltyVisionApp(QMainWindow):
         )
 
         self.sim_goal_detail = QLabel("Gol: —")
-        self.sim_goal_detail.setStyleSheet(
-            "font-size:16px;font-weight:800;color:#55f39a;"
-        )
+        self.sim_goal_detail.setObjectName("simProbGoal")
         probability_layout.addWidget(self.sim_goal_detail)
 
         self.sim_save_detail = QLabel("Atajada: —")
-        self.sim_save_detail.setStyleSheet(
-            "font-size:16px;font-weight:800;color:#48c6ff;"
-        )
+        self.sim_save_detail.setObjectName("simProbSave")
         probability_layout.addWidget(self.sim_save_detail)
 
         self.sim_miss_detail = QLabel("Fallo: —")
-        self.sim_miss_detail.setStyleSheet(
-            "font-size:16px;font-weight:800;color:#ffca56;"
-        )
+        self.sim_miss_detail.setObjectName("simProbMiss")
         probability_layout.addWidget(self.sim_miss_detail)
 
         self.sim_probability_bar = QProgressBar()
@@ -1848,9 +1798,7 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_tree_match.setWordWrap(True)
         self.sim_tree_match.setAlignment(Qt.AlignTop)
         self.sim_tree_match.setMinimumHeight(74)
-        self.sim_tree_match.setStyleSheet(
-            "font-size:13px;color:#9fb0ba;padding:8px;"
-        )
+        self.sim_tree_match.setObjectName("simTreeMatch")
         tree_layout.addWidget(self.sim_tree_match)
 
         panel_layout.addWidget(Card(tree_layout, "panel"))
@@ -1894,13 +1842,11 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_field.goal_overlay.update()
 
         self.sim_outcome.setText("—")
-        self.sim_outcome.setStyleSheet(
-            "font-size:39px;font-weight:900;color:#8aa0ad;"
-            "background:#050c13;border-radius:10px;"
-        )
-        self.sim_outcome_text.setText(
-            "Selecciona una zona para comenzar."
-        )
+        self.sim_outcome.setProperty("outcome", "pending")
+        self.sim_outcome.style().unpolish(self.sim_outcome)
+        self.sim_outcome.style().polish(self.sim_outcome)
+
+        self.sim_outcome_text.setText("Selecciona una zona para comenzar.")
         self.sim_zone_detail.setText("Zona elegida: —")
         self.sim_frequency_detail.setText("Movimiento rival: —")
         self.sim_rank_detail.setText("Ranking: —")
@@ -1908,9 +1854,10 @@ class PenaltyVisionApp(QMainWindow):
         self.sim_save_detail.setText("Atajada: —")
         self.sim_miss_detail.setText("Fallo: —")
         self.sim_probability_bar.setValue(0)
-        self.sim_tree_match.setStyleSheet(
-            "font-size:13px;color:#9fb0ba;padding:8px;"
-        )
+
+        self.sim_tree_match.setProperty("followed", "pending")
+        self.sim_tree_match.style().unpolish(self.sim_tree_match)
+        self.sim_tree_match.style().polish(self.sim_tree_match)
         self.sim_tree_match.setText(
             "Todavía no se ha comparado la jugada con la recomendación."
         )
@@ -1971,56 +1918,28 @@ class PenaltyVisionApp(QMainWindow):
         self.go("simulation")
 
     def manual_shot(self, chosen_zone):
-        """Ejecuta una jugada interactiva según el modo seleccionado.
-
-        En modo arquero, el usuario elige hacia dónde se lanza el arquero y
-        el disparo del pateador se sortea con su distribución de probabilidades.
-        En modo pateador, el usuario elige la zona del disparo y el movimiento
-        del arquero se sortea con su perfil de cobertura.
-
-        La recomendación representa la mejor decisión estadística, pero no
-        garantiza que una jugada individual termine en atajada o gol.
-        """
         mode = self.context.get("analysis_mode", "arquero")
         recommended_zone = self.decision["zona_lanzamiento"]
         effects = self.condition_effects()
 
         if mode == "arquero":
-            # El usuario decide a qué zona se lanza el arquero.
             keeper_zone = chosen_zone
-
-            # El pateador no está obligado a disparar a la zona predicha.
-            # La zona real se sortea utilizando sus probabilidades ajustadas.
             distribution = getattr(
-                self,
-                "simulated_zone_probs",
-                self.player_zone_probs,
+                self, "simulated_zone_probs", self.player_zone_probs
             )
             shot_zone = self.weighted_zone(distribution)
-            shot_probability = float(distribution.get(shot_zone, 0.0))
             same_zone = keeper_zone == shot_zone
 
-            # Las condiciones aumentan o reducen el riesgo de fallo.
             miss_probability = 7.0 + effects["miss_bonus"]
             miss_probability -= effects["player_bonus"]
             miss_probability = min(45.0, max(2.0, miss_probability))
 
             if same_zone:
-                # Si el arquero cubre exactamente la zona del disparo,
-                # la jugada no puede terminar en gol. Puede ser atajada
-                # o fallada por el propio pateador.
-                save_probability = max(
-                    0.0,
-                    100.0 - miss_probability,
-                )
+                save_probability = max(0.0, 100.0 - miss_probability)
                 goal_probability = 0.0
             else:
-                # Si el arquero eligió otra zona, no puede atajar.
                 save_probability = 0.0
-                goal_probability = max(
-                    0.0,
-                    100.0 - miss_probability,
-                )
+                goal_probability = max(0.0, 100.0 - miss_probability)
 
             roll = random.random() * 100
             if roll < miss_probability:
@@ -2031,61 +1950,44 @@ class PenaltyVisionApp(QMainWindow):
                 outcome = "GOL"
 
             selected_label = (
-                f"Zona elegida por el arquero: "
-                f"{NOMBRES[keeper_zone]} ({keeper_zone})"
+                f"Zona elegida por el arquero: {NOMBRES[keeper_zone]} ({keeper_zone})"
             )
-            action_detail = (
-                f"El pateador disparó a "
-                f"{NOMBRES[shot_zone]} ({shot_zone})."
-            )
+            action_detail = f"El pateador disparó a {NOMBRES[shot_zone]} ({shot_zone})."
 
             prediction_hit = recommended_zone == shot_zone
             followed_recommendation = keeper_zone == recommended_zone
 
             if same_zone:
-                comparison = (
-                    "✓ El arquero cubrió la misma zona del disparo. "
-                    "La decisión coincidió con la jugada simulada."
-                )
+                comparison = "✓ El arquero cubrió la misma zona del disparo."
             elif followed_recommendation:
                 comparison = (
-                    f"Seguiste la mejor recomendación estadística, pero en "
-                    f"esta jugada el pateador disparó a "
-                    f"{NOMBRES[shot_zone]} ({shot_zone}). La predicción indica "
-                    f"la zona más conveniente para cubrir, pero no garantiza "
-                    f"el resultado de un solo penal."
+                    f"Seguiste la recomendación, pero el pateador disparó a "
+                    f"{NOMBRES[shot_zone]} ({shot_zone})."
                 )
             elif prediction_hit:
                 comparison = (
-                    f"La predicción sí anticipó el disparo en "
-                    f"{NOMBRES[recommended_zone]} ({recommended_zone}), pero "
-                    f"el arquero eligió {NOMBRES[keeper_zone]} ({keeper_zone})."
+                    f"La predicción anticipó el disparo en {NOMBRES[recommended_zone]}, "
+                    f"pero elegiste cubrir {NOMBRES[keeper_zone]}."
                 )
             else:
                 comparison = (
-                    f"El arquero eligió {NOMBRES[keeper_zone]} ({keeper_zone}) "
-                    f"y el pateador disparó a "
-                    f"{NOMBRES[shot_zone]} ({shot_zone})."
+                    f"El arquero eligió {NOMBRES[keeper_zone]} y el "
+                    f"pateador disparó a {NOMBRES[shot_zone]}."
                 )
 
             animation_shot = shot_zone
             animation_keeper = keeper_zone
-            estimated_value = shot_probability
+            estimated_value = float(distribution.get(keeper_zone, 0.0))
             rank_probs = distribution
+            rank_zone = chosen_zone
 
             self.context["manual_keeper_zone"] = keeper_zone
             self.context["manual_shot_zone"] = shot_zone
 
-        else:
-            # El usuario decide hacia dónde dispara el pateador.
+        else:  # Modo Pateador
             shot_zone = chosen_zone
             keeper_zone = self.weighted_zone(self.keeper_zone_probs)
-            shot_probability = float(
-                self.player_zone_probs.get(shot_zone, 0.0)
-            )
-            keeper_probability = float(
-                self.keeper_zone_probs.get(keeper_zone, 0.0)
-            )
+            shot_probability = float(self.player_zone_probs.get(shot_zone, 0.0))
             same_zone = shot_zone == keeper_zone
 
             max_player = max(self.player_zone_probs.values()) or 1.0
@@ -2100,20 +2002,11 @@ class PenaltyVisionApp(QMainWindow):
             miss_probability = min(45.0, max(4.0, miss_probability))
 
             if same_zone:
-                # Si el arquero cubre exactamente la zona del disparo,
-                # la pelota no puede terminar en gol.
-                save_probability = max(
-                    0.0,
-                    100.0 - miss_probability,
-                )
+                save_probability = max(0.0, 100.0 - miss_probability)
                 goal_probability = 0.0
             else:
-                # En una zona distinta no existe posibilidad de atajada.
                 save_probability = 0.0
-                goal_probability = max(
-                    0.0,
-                    100.0 - miss_probability,
-                )
+                goal_probability = max(0.0, 100.0 - miss_probability)
 
             roll = random.random() * 100
             if roll < miss_probability:
@@ -2124,35 +2017,24 @@ class PenaltyVisionApp(QMainWindow):
                 outcome = "GOL"
 
             selected_label = (
-                f"Zona elegida por el pateador: "
-                f"{NOMBRES[shot_zone]} ({shot_zone})"
+                f"Zona elegida por el pateador: {NOMBRES[shot_zone]} ({shot_zone})"
             )
-            action_detail = (
-                f"El arquero se lanzó a "
-                f"{NOMBRES[keeper_zone]} ({keeper_zone})."
-            )
+            action_detail = f"El arquero se lanzó a {NOMBRES[keeper_zone]} ({keeper_zone})."
 
             followed_recommendation = shot_zone == recommended_zone
 
             if same_zone:
-                comparison = (
-                    "El arquero cubrió la misma zona del disparo."
-                )
+                comparison = "El arquero cubrió la misma zona del disparo."
             elif followed_recommendation:
-                comparison = (
-                    "✓ El disparo siguió la recomendación y evitó la zona "
-                    "elegida por el arquero en esta jugada."
-                )
+                comparison = "✓ El disparo siguió la recomendación y evitó al arquero."
             else:
-                comparison = (
-                    "El disparo evitó la zona del arquero, aunque no siguió "
-                    "la recomendación principal del sistema."
-                )
+                comparison = "El disparo evitó al arquero, pero no siguió la recomendación."
 
             animation_shot = shot_zone
             animation_keeper = keeper_zone
             estimated_value = shot_probability
             rank_probs = self.player_zone_probs
+            rank_zone = shot_zone
 
             self.context["manual_shot_zone"] = shot_zone
             self.context["manual_keeper_zone"] = keeper_zone
@@ -2163,22 +2045,16 @@ class PenaltyVisionApp(QMainWindow):
             reverse=True,
         )
         rank = next(
-            i + 1
-            for i, (zone, _) in enumerate(ranking)
-            if zone == shot_zone
+            (i + 1 for i, (zone, _) in enumerate(ranking) if zone == rank_zone),
+            "N/A",
         )
 
-        self.context["manual_zone"] = shot_zone
+        self.context["manual_zone"] = chosen_zone
         self.context["manual_outcome"] = outcome
         self.context["manual_goal_probability"] = goal_probability
         self.context["manual_save_probability"] = save_probability
         self.context["manual_miss_probability"] = miss_probability
 
-        outcome_colors = {
-            "GOL": "#55f39a",
-            "ATAJADA": "#48c6ff",
-            "FALLADO": "#ff5c69",
-        }
         outcome_texts = {
             "GOL": "La pelota entró.",
             "ATAJADA": "El arquero detuvo el disparo.",
@@ -2186,10 +2062,10 @@ class PenaltyVisionApp(QMainWindow):
         }
 
         self.sim_outcome.setText(outcome)
-        self.sim_outcome.setStyleSheet(
-            f"font-size:44px;font-weight:900;"
-            f"color:{outcome_colors[outcome]};"
-        )
+        self.sim_outcome.setProperty("outcome", outcome)
+        self.sim_outcome.style().unpolish(self.sim_outcome)
+        self.sim_outcome.style().polish(self.sim_outcome)
+
         self.sim_outcome_text.setText(outcome_texts[outcome])
         self.sim_zone_detail.setText(selected_label)
         self.sim_frequency_detail.setText(
@@ -2198,42 +2074,31 @@ class PenaltyVisionApp(QMainWindow):
         )
         self.sim_rank_detail.setText(f"Ranking de la zona: {rank}/9")
         self.sim_goal_detail.setText(f"Gol: {goal_probability:.1f}%")
-        self.sim_save_detail.setText(
-            f"Atajada: {save_probability:.1f}%"
-        )
-        self.sim_miss_detail.setText(
-            f"Fallo: {miss_probability:.1f}%"
-        )
+        self.sim_save_detail.setText(f"Atajada: {save_probability:.1f}%")
+        self.sim_miss_detail.setText(f"Fallo: {miss_probability:.1f}%")
         self.sim_probability_bar.setValue(round(goal_probability))
 
         followed_system = (
-            mode == "arquero" and chosen_zone == recommended_zone
-        ) or (
-            mode == "pateador" and shot_zone == recommended_zone
+            (mode == "arquero" and chosen_zone == recommended_zone)
+            or (mode == "pateador" and shot_zone == recommended_zone)
         )
 
+        self.sim_tree_match.setProperty("followed", followed_system)
+        self.sim_tree_match.style().unpolish(self.sim_tree_match)
+        self.sim_tree_match.style().polish(self.sim_tree_match)
+
         if followed_system:
-            self.sim_tree_match.setStyleSheet(
-                "font-size:16px;font-weight:800;color:#55f39a;"
-            )
             self.sim_tree_match.setText(
                 "✓ Seguiste la recomendación estadística del sistema.\n"
                 f"{comparison}"
             )
         else:
-            self.sim_tree_match.setStyleSheet(
-                "font-size:16px;font-weight:800;color:#ffca56;"
-            )
             self.sim_tree_match.setText(
                 "No seguiste la recomendación principal.\n"
                 f"{comparison}"
             )
 
-        self.sim_field.play(
-            animation_shot,
-            animation_keeper,
-            outcome,
-        )
+        self.sim_field.play(animation_shot, animation_keeper, outcome)
 
     def build_report(self):
         w = QWidget()
@@ -2277,7 +2142,7 @@ class PenaltyVisionApp(QMainWindow):
         for title, label, row, col in cards:
             layout = QVBoxLayout()
             layout.addWidget(QLabel(title, objectName="section"))
-            label.setStyleSheet("font-size:14px;padding:8px;")
+            label.setObjectName("reportCardLabel")
             layout.addWidget(label)
             layout.addStretch()
             self.report_layout.addWidget(Card(layout, "majorCard"), row, col)
