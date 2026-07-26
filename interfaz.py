@@ -3,6 +3,7 @@ from __future__ import annotations
 import multiprocessing as mp
 import random
 import sys
+import time
 
 import pandas as pd
 from PySide6.QtCore import Qt
@@ -1587,9 +1588,18 @@ class PenaltyVisionApp(QMainWindow):
         )
         self.worker.listo.connect(self.monte_carlo_done)
         self.worker.error.connect(self.monte_carlo_error)
+
+        # Contador
+        self.start_time = time.time()
+
         self.worker.start()
 
     def monte_carlo_done(self, result):
+
+        # Detención contador
+        end_time = time.time()
+        duration = end_time - self.start_time
+
         self.progress.hide()
         self.sim_button.setEnabled(True)
         self.sim_result = result
@@ -1648,12 +1658,14 @@ class PenaltyVisionApp(QMainWindow):
         # calculados con las condiciones dentro de simulador.py.
         r = result["resultados"]
 
+        duration_text = f"Tiempo de ejecución: <b>{duration:.2f} segundos</b>"
         self.sim_summary.setText(
             f"<b>Resultado general de "
             f"{result['n_simulaciones']:,} simulaciones</b><br><br>"
             f"Gol: <b>{float(r['gol']):.1f}%</b><br>"
             f"Atajada: <b>{float(r['atajada']):.1f}%</b><br>"
-            f"Fallo: <b>{float(r['fallado']):.1f}%</b>"
+            f"Fallo: <b>{float(r['fallado']):.1f}%</b><br><br>"
+            f"{duration_text}"  # <-- Se añade el tiempo de ejecución aquí
         )
 
         effects = result.get("efectos_condiciones", {})
