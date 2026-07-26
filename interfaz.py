@@ -1653,18 +1653,16 @@ class PenaltyVisionApp(QMainWindow):
                 "multiprocesamiento."
             )
         else:
-            score_values = self.decision.get("scores", {})
-            max_score = max(score_values.values()) or 1.0
-            heat_values = {
-                z: score_values.get(z, 0.0) * 100.0 / max_score
-                for z in self.player_zone_probs
-            }
+            # Mostrar porcentajes reales de las simulaciones. Antes se
+            # escalaba la mejor puntuación a 100 %, lo que hacía que el
+            # mapa no coincidiera con la portería interactiva.
+            heat_values = self.simulated_zone_probs
             heading = "RECOMENDACIÓN PARA EL PATEADOR"
             action = "Disparar a"
             explanation = (
-                "El mapa combina la capacidad del pateador con las zonas "
-                "menos cubiertas por el arquero rival. Las probabilidades "
-                "del pateador ya incluyen las condiciones del partido."
+                "El mapa muestra la distribución real de las zonas obtenidas "
+                "en las 2.000 simulaciones. La zona resaltada corresponde a "
+                "la recomendación calculada para el pateador."
             )
 
         self.heatmap.set_data(heat_values, zone)
@@ -1931,7 +1929,11 @@ class PenaltyVisionApp(QMainWindow):
                 "Haz clic en la zona hacia la que deseas lanzar al arquero. "
                 "El pateador ejecutará su disparo según su historial."
             )
-            displayed_probs = self.player_zone_probs
+            displayed_probs = getattr(
+                self,
+                "simulated_zone_probs",
+                self.player_zone_probs,
+            )
         else:
             self.sim_prediction_label.setText(
                 f"Recomendación: disparar a "
@@ -1942,7 +1944,11 @@ class PenaltyVisionApp(QMainWindow):
                 "Haz clic en la zona donde deseas disparar. "
                 "El arquero se lanzará según su historial."
             )
-            displayed_probs = self.player_zone_probs
+            displayed_probs = getattr(
+                self,
+                "simulated_zone_probs",
+                self.player_zone_probs,
+            )
 
         instruction_labels = self.pages["simulation"].findChildren(QLabel)
         for label in instruction_labels:
@@ -2000,33 +2006,26 @@ class PenaltyVisionApp(QMainWindow):
             miss_probability = min(45.0, max(2.0, miss_probability))
 
             if same_zone:
-                # El arquero acertó exactamente la zona del disparo.
-                save_probability = min(
-                    78.0,
-                    58.0 + effects["keeper_bonus"],
+                # Si el arquero cubre exactamente la zona del disparo,
+                # la jugada no puede terminar en gol. Puede ser atajada
+                # o fallada por el propio pateador.
+                save_probability = max(
+                    0.0,
+                    100.0 - miss_probability,
                 )
+                goal_probability = 0.0
             else:
-                # Aunque no acierte la zona, conserva una pequeña posibilidad
-                # de atajar por reflejos o reacción.
-                save_probability = min(
-                    12.0,
-                    max(3.0, 5.0 + effects["keeper_bonus"] * 0.25),
+                # Si el arquero eligió otra zona, no puede atajar.
+                save_probability = 0.0
+                goal_probability = max(
+                    0.0,
+                    100.0 - miss_probability,
                 )
-
-            # Evita que la suma de probabilidades supere el 100 %.
-            save_probability = min(
-                save_probability,
-                max(0.0, 100.0 - miss_probability),
-            )
-            goal_probability = max(
-                0.0,
-                100.0 - save_probability - miss_probability,
-            )
 
             roll = random.random() * 100
             if roll < miss_probability:
                 outcome = "FALLADO"
-            elif roll < miss_probability + save_probability:
+            elif same_zone:
                 outcome = "ATAJADA"
             else:
                 outcome = "GOL"
@@ -2101,32 +2100,25 @@ class PenaltyVisionApp(QMainWindow):
             miss_probability = min(45.0, max(4.0, miss_probability))
 
             if same_zone:
-                save_probability = min(
-                    78.0,
-                    42.0
-                    + keeper_probability * 0.55
-                    + effects["keeper_bonus"],
+                # Si el arquero cubre exactamente la zona del disparo,
+                # la pelota no puede terminar en gol.
+                save_probability = max(
+                    0.0,
+                    100.0 - miss_probability,
                 )
+                goal_probability = 0.0
             else:
-                # El arquero aún puede reaccionar aunque haya elegido otra zona.
-                save_probability = min(
-                    12.0,
-                    max(3.0, 4.0 + effects["keeper_bonus"] * 0.25),
+                # En una zona distinta no existe posibilidad de atajada.
+                save_probability = 0.0
+                goal_probability = max(
+                    0.0,
+                    100.0 - miss_probability,
                 )
-
-            save_probability = min(
-                save_probability,
-                max(0.0, 100.0 - miss_probability),
-            )
-            goal_probability = max(
-                0.0,
-                100.0 - save_probability - miss_probability,
-            )
 
             roll = random.random() * 100
             if roll < miss_probability:
                 outcome = "FALLADO"
-            elif roll < miss_probability + save_probability:
+            elif same_zone:
                 outcome = "ATAJADA"
             else:
                 outcome = "GOL"
