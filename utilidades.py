@@ -30,10 +30,6 @@ HOME = Path.home()
 ONEDRIVE = Path(os.environ.get("OneDrive", HOME / "OneDrive"))
 
 EXTERNAL_IMAGE_ROOTS = [
-    PLAYERS_DIR,
-    KEEPERS_DIR,
-    IMG_DIR / "Imagenes jugadores",
-    IMG_DIR / "Imagenes arqueros",
     HOME / "Documents" / "Tercer Semestre" / "EDA" / "Imagenes jugadores",
     HOME / "Documents" / "Tercer Semestre" / "EDA" / "Imagenes arqueros",
     ONEDRIVE / "Documents" / "Tercer Semestre" / "EDA" / "Imagenes jugadores",
@@ -55,18 +51,11 @@ NOMBRES = {
 
 LOGOS_EQUIPOS = {
     "Argentina": "argentina.png",
-    "Ecuador": "ecuador.png",
-    "Francia": "francia.png",
-    "Inglaterra": "inglaterra.png",
     "España": "espana.png",
-    "Brasil": "brasil.png",
-    "Portugal": "portugal.png",
 }
 
 ARQUEROS_RESPALDO = {
     "Argentina": ["Emiliano Martínez"],
-    "Francia": ["Hugo Lloris", "Mike Maignan"],
-    "Inglaterra": ["Jordan Pickford"],
     "España": ["David Raya", "Joan García", "Unai Simón"],
 }
 

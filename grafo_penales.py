@@ -8,8 +8,8 @@ Responsabilidades de este módulo (según el documento base):
     2. Construcción del grafo jugador -> zonas (networkx), donde cada
        arista representa "hacia dónde suele patear un jugador" y su
        peso es el número/porcentaje de penales hacia esa zona.
-    3. Cálculo de probabilidades por zona (conteo de frecuencias).
-    4. Filtros (presión alta) para que la predicción sea más "inteligente".
+    3. Cálculo de probabilidades recorriendo las aristas del grafo.
+    4. Filtros de presión para ajustar la distribución obtenida del grafo.
 
 Funciones públicas que usará Persona 1 (interfaz.py):
     cargar_penales(ruta)
@@ -223,8 +223,21 @@ def calcular_probabilidades(jugador, presion=None, df=None):
 
     fila = _buscar_jugador(df, jugador)
 
-    # Probabilidades base = porcentajes históricos por zona
-    probs = {zona: float(fila[col]) for zona, col in COLUMNA_ZONA.items()}
+    # Construir el grafo dirigido del jugador.
+    # El nodo principal es el jugador y las nueve zonas son los nodos destino.
+    grafo = construir_grafo(
+        fila["jugador"],
+        df=df,
+    )
+
+    nodo_jugador = fila["jugador"]
+
+    # Obtener las probabilidades recorriendo las aristas del grafo.
+    # Así el grafo participa directamente en el cálculo de la predicción.
+    probs = {
+        zona: float(grafo[nodo_jugador][zona]["porcentaje"])
+        for zona in ZONAS
+    }
 
     zona_fav = str(fila["zona_favorita"]).upper()
     zona_seg = str(fila["segunda_zona"]).upper()

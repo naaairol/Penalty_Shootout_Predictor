@@ -8,7 +8,7 @@ Este módulo integra:
     2. Condiciones del partido: clima, cancha, ambiente, ruido, fase,
        presión y penal decisivo.
     3. Árbol de decisión del arquero.
-    4. Simulaciones Monte Carlo distribuidas con multiprocessing.Pool.
+    4. Simulaciones Monte Carlo de penales individuales distribuidas con multiprocessing.Pool.
 
 Las condiciones son reglas heurísticas del modelo del proyecto. Por ejemplo,
 la lluvia aumenta el riesgo de fallo y refuerza ligeramente los tiros bajos.
@@ -30,8 +30,6 @@ from grafo_penales import calcular_probabilidades
 PROB_FALLO = 0.055
 PROB_ATAJADA_ACIERTO = 0.60
 PROB_ATAJADA_FALLO = 0.05
-MAX_RONDAS_MUERTE_SUBITA = 15
-
 ZONAS_BAJAS = ("BI", "BC", "BD")
 ZONAS_CENTRALES = ("AC", "MC", "BC")
 
@@ -281,26 +279,6 @@ def _resolver_disparo(
     return resultado, zona_real
 
 
-def _resultado_disparo(
-    probabilidades_zonas,
-    zona_arquero,
-    prob_fallo=PROB_FALLO,
-    prob_atajada_acierto=PROB_ATAJADA_ACIERTO,
-    prob_atajada_fallo=PROB_ATAJADA_FALLO,
-):
-    """
-    Compatibilidad con la simulación de tandas: retorna únicamente
-    "gol", "atajada" o "fallado".
-    """
-    resultado, _ = _resolver_disparo(
-        probabilidades_zonas,
-        zona_arquero,
-        prob_fallo,
-        prob_atajada_acierto,
-        prob_atajada_fallo,
-    )
-    return resultado
-
 
 def _repartir_en_lotes(n, n_procesos):
     """Reparte n repeticiones en lotes lo más parejos posible."""
@@ -477,191 +455,4 @@ def simular_penales(
                 parametros["prob_atajada_fallo"] * 100, 2
             ),
         },
-    }
-
-
-# ---------------------------------------------------------------------------
-# 2. Simulación de una tanda completa entre dos equipos
-# ---------------------------------------------------------------------------
-
-def _construir_perfil(jugador, presion, df):
-    """
-    Precalcula las probabilidades y las zonas de decisión para una tanda.
-    Esta función conserva el comportamiento original de simular_tanda.
-    """
-    probabilidades = calcular_probabilidades(jugador, presion=presion, df=df)
-    zona_normal = decidir_arquero(
-        probabilidades,
-        presion=presion,
-        decisivo=False,
-    )["zona_lanzamiento"]
-    zona_decisiva = decidir_arquero(
-        probabilidades,
-        presion=presion,
-        decisivo=True,
-    )["zona_lanzamiento"]
-
-    return {
-        "jugador": probabilidades["jugador"],
-        "probabilidades": probabilidades["probabilidades"],
-        "zona_normal": zona_normal,
-        "zona_decisiva": zona_decisiva,
-    }
-
-
-def _simular_lote_tandas(args):
-    (
-        n_lote,
-        perfiles_local,
-        perfiles_visita,
-        penales_por_equipo,
-        semilla,
-    ) = args
-    random.seed(semilla)
-
-    n_local = len(perfiles_local)
-    n_visita = len(perfiles_visita)
-    conteos = {"gana_local": 0, "gana_visita": 0, "empate": 0}
-
-    for _ in range(n_lote):
-        goles_local = 0
-        goles_visita = 0
-        indice = 0
-
-        for ronda in range(penales_por_equipo):
-            decisivo = ronda == penales_por_equipo - 1
-
-            perfil_l = perfiles_local[indice % n_local]
-            zona_l = (
-                perfil_l["zona_decisiva"]
-                if decisivo
-                else perfil_l["zona_normal"]
-            )
-            if _resultado_disparo(
-                perfil_l["probabilidades"], zona_l
-            ) == "gol":
-                goles_local += 1
-
-            perfil_v = perfiles_visita[indice % n_visita]
-            zona_v = (
-                perfil_v["zona_decisiva"]
-                if decisivo
-                else perfil_v["zona_normal"]
-            )
-            if _resultado_disparo(
-                perfil_v["probabilidades"], zona_v
-            ) == "gol":
-                goles_visita += 1
-
-            indice += 1
-
-        rondas_extra = 0
-        while (
-            goles_local == goles_visita
-            and rondas_extra < MAX_RONDAS_MUERTE_SUBITA
-        ):
-            perfil_l = perfiles_local[indice % n_local]
-            if _resultado_disparo(
-                perfil_l["probabilidades"],
-                perfil_l["zona_decisiva"],
-            ) == "gol":
-                goles_local += 1
-
-            perfil_v = perfiles_visita[indice % n_visita]
-            if _resultado_disparo(
-                perfil_v["probabilidades"],
-                perfil_v["zona_decisiva"],
-            ) == "gol":
-                goles_visita += 1
-
-            indice += 1
-            rondas_extra += 1
-
-        if goles_local > goles_visita:
-            conteos["gana_local"] += 1
-        elif goles_visita > goles_local:
-            conteos["gana_visita"] += 1
-        else:
-            conteos["empate"] += 1
-
-    return conteos
-
-
-def simular_tanda(
-    jugadores_local,
-    jugadores_visita,
-    arquero_local,
-    arquero_visita,
-    n_simulaciones=1000,
-    penales_por_equipo=5,
-    presion="alta",
-    df=None,
-):
-    """Simula tandas completas conservando la interfaz original."""
-    if not jugadores_local or not jugadores_visita:
-        raise ValueError(
-            "Ambas listas de jugadores deben tener al menos un elemento."
-        )
-
-    if not isinstance(n_simulaciones, int) or n_simulaciones <= 0:
-        raise ValueError(
-            "La cantidad de simulaciones debe ser mayor que cero."
-        )
-
-    perfiles_local = [
-        _construir_perfil(j, presion, df)
-        for j in jugadores_local
-    ]
-    perfiles_visita = [
-        _construir_perfil(j, presion, df)
-        for j in jugadores_visita
-    ]
-
-    n_procesos = min(mp.cpu_count(), n_simulaciones)
-    lotes = _repartir_en_lotes(n_simulaciones, n_procesos)
-
-    tareas = [
-        (
-            n_lote,
-            perfiles_local,
-            perfiles_visita,
-            penales_por_equipo,
-            random.randint(0, 2**31 - 1),
-        )
-        for n_lote in lotes
-    ]
-
-    with mp.Pool(processes=len(tareas)) as pool:
-        resultados_parciales = pool.map(
-            _simular_lote_tandas,
-            tareas,
-        )
-
-    conteos = {"gana_local": 0, "gana_visita": 0, "empate": 0}
-    for parcial in resultados_parciales:
-        for clave in conteos:
-            conteos[clave] += parcial[clave]
-
-    return {
-        "equipo_local": {
-            "jugadores": [p["jugador"] for p in perfiles_local],
-            "arquero_rival": arquero_visita,
-            "gana_pct": round(
-                conteos["gana_local"] * 100.0 / n_simulaciones,
-                2,
-            ),
-        },
-        "equipo_visitante": {
-            "jugadores": [p["jugador"] for p in perfiles_visita],
-            "arquero_rival": arquero_local,
-            "gana_pct": round(
-                conteos["gana_visita"] * 100.0 / n_simulaciones,
-                2,
-            ),
-        },
-        "empate_pct": round(
-            conteos["empate"] * 100.0 / n_simulaciones,
-            2,
-        ),
-        "n_simulaciones": n_simulaciones,
     }

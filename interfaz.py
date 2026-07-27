@@ -47,7 +47,6 @@ class PenaltyVisionApp(QMainWindow):
         self.decision = None
         self.sim_result = None
         self.worker = None
-        self.previous_page = 0
 
         self.load_data()
 
@@ -1160,19 +1159,6 @@ class PenaltyVisionApp(QMainWindow):
             self.condition_effects(),
         )
 
-    def simulated_heatmap(self, probabilities, n=2000):
-        zones = list(probabilities.keys())
-        weights = [float(probabilities[z]) for z in zones]
-        results = random.choices(zones, weights=weights, k=n)
-        counts = {zone: 0 for zone in zones}
-
-        for zone in results:
-            counts[zone] += 1
-
-        return {
-            zone: counts[zone] * 100.0 / n
-            for zone in zones
-        }
 
     def keeper_probabilities(self, keeper_name):
         uniform = {zone: 100.0 / 9.0 for row in ZONAS for zone in row}
@@ -1309,11 +1295,11 @@ class PenaltyVisionApp(QMainWindow):
         self.context["player"] = self.player.currentText()
         self.context["keeper"] = self.keeper.currentText()
 
-        self.raw_player_zone_probs = self.probs["probabilidades"]
+        raw_player_zone_probs = self.probs["probabilidades"]
 
         # Aplicar lluvia, cancha, ruido, fase, presión y penal decisivo.
         self.player_zone_probs = self.adjusted_player_probabilities(
-            self.raw_player_zone_probs
+            raw_player_zone_probs
         )
 
         # Recalcular zona favorita, segunda zona y confianza después
@@ -1322,8 +1308,6 @@ class PenaltyVisionApp(QMainWindow):
             self.probs,
             self.player_zone_probs,
         )
-        self.adjusted_probs = adjusted_result
-
         self.keeper_zone_probs = self.keeper_probabilities(
             self.context["keeper"]
         )
@@ -1825,9 +1809,6 @@ class PenaltyVisionApp(QMainWindow):
 
         body.addWidget(side_scroll, 1)
         root.addLayout(body, 1)
-
-        self.manual_result = QLabel("")
-        self.manual_result.hide()
 
         nav = QHBoxLayout()
         nav.addWidget(
